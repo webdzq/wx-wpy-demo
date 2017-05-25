@@ -43,4 +43,4 @@ this.$broadcast('broadcast-initDatePicker', {
 ```
 
 ## 更多说明
-参考[github](https://github.com/webdzq/wx-wpy-demo/tree/master/wpy-wx-datePicker)。
+参考[github源码地址](https://github.com/webdzq/wx-wpy-demo/tree/master/wpy-wx-datePicker)。
