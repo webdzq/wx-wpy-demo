@@ -1,9 +1,3 @@
 node_modules
 dist
-src
-style
-.editorconfig
-.eslintignore
-dev.sh
-up.sh
-wepy.config.js
+.svn
