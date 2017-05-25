@@ -10,6 +10,11 @@
     },
     "author": "doingweb",
     "license": "ISC",
+    "keywords": [
+        "wepy",
+        "datepicker",
+        "wxchat"
+    ],
     "dependencies": {
         "wepy": "^1.5.2",
         "wepy-async-function": "^1.4.4",
