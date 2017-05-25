@@ -1,0 +1,94 @@
+<style lang="less">
+
+</style>
+
+<template>
+  <view class="container">
+    <panel>
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+          <view class="weui-cell__bd">发布时间</view>
+          <view class="weui-cell__ft weui-cell__ft_in-access" data-id="1" bindtap="selectPicker">{{getPublish_time}}</view>
+        </view>
+        <view class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+          <view class="weui-cell__bd">截止时间</view>
+          <view class="weui-cell__ft weui-cell__ft_in-access" data-id="2" bindtap="selectPicker">{{getEnd_time}}</view>
+        </view>
+      </view>
+    </panel>
+    <DatePicker :hidden.sync="hidden" :curPickTime.sync="curPickTime" @initDateemit="nitDateemitHandle"></DatePicker>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Panel from '../components/panel'
+  import DatePicker from '../components/datePicker'
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: 'datePicker'
+    }
+    components = {
+      panel: Panel,
+      DatePicker: DatePicker
+    }
+    data = {
+      curPickId: '1',
+      curPickTime: '2000.01.01 20:00',
+      publish_time: '2000.01.01 00:00',
+      end_time: '2000.01.01 22:00',
+      hidden: true
+    }
+    computed = {
+      now() {
+        return +new Date()
+      },
+      getPublish_time() {
+        console.log('getPublish_time...', this.curPickId)
+        if (this.curPickId === '1') {
+          this.publish_time = this.curPickTime
+        }
+        return this.publish_time
+      },
+      getEnd_time() {
+        console.log('getEnd_time...', this.curPickId)
+        if (this.curPickId === '2') {
+          this.end_time = this.curPickTime
+        }
+        // console.log('getEnd_time...endtime=', this.curPickTime, this.end_time)
+        return this.end_time
+      }
+    }
+    methods = {
+      initDateemitHandle() {
+        console.log('initDateemitHandle...')
+      },
+      selectPicker(e) {
+        this.hidden = false
+        this.curPickId = e.target.dataset.id
+        console.log('111111', this.hidden, this.curPickId)
+        if (this.curPickId === '1') {
+          this.curPickTime = this.publish_time
+        } else if (this.curPickId === '2') {
+          this.curPickTime = this.end_time
+        }
+        this.$broadcast('broadcast-initDatePicker', {
+          curPickTime: this.curPickTime
+        })
+      }
+    }
+    events = {
+      'initDateemit': (...args) => {
+        console.log('initDateemit...', args)
+      }
+    }
+    onLoad() {
+      let self = this
+      this.$parent.getUserInfo(function(userInfo) {
+        if (userInfo) {
+          self.userInfo = userInfo
+        }
+      })
+    }
+  }
+</script>
