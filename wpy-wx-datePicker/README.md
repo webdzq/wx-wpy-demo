@@ -1,6 +1,6 @@
 # 微信小程序 wepyjs 第三方datePicker组件
 
-![datePicker](https://github.com/webdzq/wx-wpy-demo/blob/master/wpy-wx-datePicker/datepicker.gif)
+![datePicker](https://github.com/webdzq/wx-wpy-demo/blob/master/wpy-wx-datepicker/datepicker.gif)
 
 
 ## 说明
@@ -10,9 +10,10 @@
 
 ## 使用
  有隐藏，有赋值，有事件触发，比较复杂。请看示例吧
+
 ### 安装组件
 ```
-npm install wpy-datePicker --save
+npm install wpy-wx-datepicker --save
 ```
 
 ### 引入组件
@@ -23,7 +24,7 @@ npm install wpy-datePicker --save
 </template>
 <script>
     import wepy from 'wepy';
-    import datePicker from 'wpy-datePicker';
+    import datePicker from 'wpy-wx-datepicker';
 
     export default class Index extends wepy.page {
         components = {

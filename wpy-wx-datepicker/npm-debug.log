@@ -1,0 +1,101 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'wpy-wx-datepicker',
+1 verbose cli   '--save-dev' ]
+2 info using npm@3.10.8
+3 info using node@v7.6.0
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readLocalPackageData
+7 silly fetchPackageMetaData wpy-wx-datepicker
+8 silly fetchNamedPackageData wpy-wx-datepicker
+9 silly mapToRegistry name wpy-wx-datepicker
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry data Result {
+12 silly mapToRegistry   raw: 'wpy-wx-datepicker',
+12 silly mapToRegistry   scope: null,
+12 silly mapToRegistry   escapedName: 'wpy-wx-datepicker',
+12 silly mapToRegistry   name: 'wpy-wx-datepicker',
+12 silly mapToRegistry   rawSpec: '',
+12 silly mapToRegistry   spec: 'latest',
+12 silly mapToRegistry   type: 'tag' }
+13 silly mapToRegistry uri https://registry.npmjs.org/wpy-wx-datepicker
+14 verbose request uri https://registry.npmjs.org/wpy-wx-datepicker
+15 verbose request no auth needed
+16 info attempt registry request try #1 at 14:27:00
+17 verbose request using bearer token for auth
+18 verbose request id 8aeff1ae045e3bfd
+19 verbose etag W/"59267912-2fe1"
+20 verbose lastModified Thu, 25 May 2017 06:26:26 GMT
+21 http request GET https://registry.npmjs.org/wpy-wx-datepicker
+22 http 304 https://registry.npmjs.org/wpy-wx-datepicker
+23 verbose headers { server: 'nginx/1.10.1',
+23 verbose headers   'last-modified': 'Thu, 25 May 2017 06:26:26 GMT',
+23 verbose headers   etag: '"59267912-2fe1"',
+23 verbose headers   'cache-control': 'max-age=300',
+23 verbose headers   'accept-ranges': 'bytes',
+23 verbose headers   date: 'Thu, 25 May 2017 06:27:01 GMT',
+23 verbose headers   via: '1.1 varnish',
+23 verbose headers   connection: 'keep-alive',
+23 verbose headers   'x-served-by': 'cache-nrt6129-NRT',
+23 verbose headers   'x-cache': 'MISS',
+23 verbose headers   'x-cache-hits': '0',
+23 verbose headers   'x-timer': 'S1495693621.210555,VS0,VE133',
+23 verbose headers   vary: 'Accept-Encoding' }
+24 silly get cb [ 304,
+24 silly get   { server: 'nginx/1.10.1',
+24 silly get     'last-modified': 'Thu, 25 May 2017 06:26:26 GMT',
+24 silly get     etag: '"59267912-2fe1"',
+24 silly get     'cache-control': 'max-age=300',
+24 silly get     'accept-ranges': 'bytes',
+24 silly get     date: 'Thu, 25 May 2017 06:27:01 GMT',
+24 silly get     via: '1.1 varnish',
+24 silly get     connection: 'keep-alive',
+24 silly get     'x-served-by': 'cache-nrt6129-NRT',
+24 silly get     'x-cache': 'MISS',
+24 silly get     'x-cache-hits': '0',
+24 silly get     'x-timer': 'S1495693621.210555,VS0,VE133',
+24 silly get     vary: 'Accept-Encoding' } ]
+25 verbose etag https://registry.npmjs.org/wpy-wx-datepicker from cache
+26 verbose get saving wpy-wx-datepicker to /Users/srt/.npm/registry.npmjs.org/wpy-wx-datepicker/.cache.json
+27 verbose correctMkdir /Users/srt/.npm correctMkdir not in flight; initializing
+28 silly install normalizeTree
+29 silly loadCurrentTree Finishing
+30 silly loadIdealTree Starting
+31 silly install loadIdealTree
+32 silly cloneCurrentTree Starting
+33 silly install cloneCurrentTreeToIdealTree
+34 silly cloneCurrentTree Finishing
+35 silly loadShrinkwrap Starting
+36 silly install loadShrinkwrap
+37 silly loadShrinkwrap Finishing
+38 silly loadAllDepsIntoIdealTree Starting
+39 silly install loadAllDepsIntoIdealTree
+40 silly rollbackFailedOptional Starting
+41 silly rollbackFailedOptional Finishing
+42 silly runTopLevelLifecycles Finishing
+43 silly install printInstalled
+44 verbose stack Error: Refusing to install wpy-wx-datepicker as a dependency of itself
+44 verbose stack     at checkSelf (/usr/local/lib/node_modules/npm/lib/install/validate-args.js:53:14)
+44 verbose stack     at Array.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/slide/lib/bind-actor.js:15:8)
+44 verbose stack     at LOOP (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:15:14)
+44 verbose stack     at chain (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:20:5)
+44 verbose stack     at /usr/local/lib/node_modules/npm/lib/install/validate-args.js:16:5
+44 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/slide/lib/async-map.js:52:35
+44 verbose stack     at Array.forEach (native)
+44 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/slide/lib/async-map.js:52:11
+44 verbose stack     at Array.forEach (native)
+44 verbose stack     at asyncMap (/usr/local/lib/node_modules/npm/node_modules/slide/lib/async-map.js:51:8)
+45 verbose cwd /Users/srt/wx-wpy-demo/wpy-wx-datepicker
+46 error Darwin 15.6.0
+47 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "install" "wpy-wx-datepicker" "--save-dev"
+48 error node v7.6.0
+49 error npm  v3.10.8
+50 error code ENOSELF
+51 error Refusing to install wpy-wx-datepicker as a dependency of itself
+52 error If you need help, you may report this error at:
+52 error     <https://github.com/npm/npm/issues>
+53 verbose exit [ 1, true ]
