@@ -2,9 +2,15 @@ node_modules
 dist
 .svn
 src
-style
+
 .editorconfig
 .eslintignore
 dev.sh
 up.sh
+.eslintrc.js
+*.log
+.wepycache
 wepy.config.js
+datepicker.gif
+
+

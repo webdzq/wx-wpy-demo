@@ -13,7 +13,7 @@
 
 ### 安装组件
 ```
-npm install wpy-wx-datepicker --save
+npm install wpy-wx-datepicker --save-dev
 ```
 
 ### 引入组件

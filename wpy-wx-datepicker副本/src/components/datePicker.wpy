@@ -93,7 +93,6 @@ export default class DatePicker extends wepy.component {
       // console.log('watch..month..=', dayNum, tmpdays)
       return this.days
     }
-
   }
   resolveDate(vtime) {
     const datetime = vtime || '2000.01.01 00:00'
@@ -118,7 +117,7 @@ export default class DatePicker extends wepy.component {
     }
   }
   getParentDate(curPickTime) {
-    console.log('onShow..curPickTime=', this.curPickTime)
+    // console.log('onShow..curPickTime=', this.curPickTime)
     const dateTime = this.resolveDate(curPickTime)
     this.year = dateTime.year
     this.month = dateTime.month
@@ -243,7 +242,7 @@ export default class DatePicker extends wepy.component {
   }
   events = {
     'broadcast-initDatePicker': function (args) {
-      console.log('broadcast-initDatePicker...', args)
+      // console.log('broadcast-initDatePicker...', args)
       this.getParentDate(args.curPickTime)
     }
   }
