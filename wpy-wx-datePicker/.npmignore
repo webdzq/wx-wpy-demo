@@ -1,3 +1,10 @@
 node_modules
 dist
 .svn
+src
+style
+.editorconfig
+.eslintignore
+dev.sh
+up.sh
+wepy.config.js
