@@ -91,17 +91,14 @@ export default class DatePicker extends wepy.component {
         tmpdays.push(i)
       }
       this.days = tmpdays
-      // console.log('watch..month..=', dayNum, tmpdays)
       return this.days
     }
   }
   resolveDate(vtime) {
     const datetime = vtime || '2000.01.01 00:00'
-    // console.log('resolveDate=', datetime)
     let dateTimeArr = datetime.split(' ')
     const date = dateTimeArr[0]
     const time = dateTimeArr[1]
-    // console.log('resolveDate=', date, time)
     const dateArr = date.split('.')
     const timeArr = time.split(':')
     const year = dateArr[0]
@@ -118,7 +115,6 @@ export default class DatePicker extends wepy.component {
     }
   }
   getParentDate(curPickTime) {
-    // console.log('onShow..curPickTime=', this.curPickTime)
     const dateTime = this.resolveDate(curPickTime)
     this.year = dateTime.year
     this.month = dateTime.month
@@ -133,7 +129,6 @@ export default class DatePicker extends wepy.component {
     return this.curPickTime
   }
   initDatePicker() {
-    // console.log('initDatePicker...', this.curPickTime)
     const date = new Date()
     const years = []
     const months = []
@@ -184,7 +179,6 @@ export default class DatePicker extends wepy.component {
     this.minutes = minutes
   }
   getDayNum(vyear, vmonth) {
-    // console.log('getDayNum..', vyear, vmonth)
     const that = this
     let year = vyear
     let month = vmonth
@@ -221,7 +215,7 @@ export default class DatePicker extends wepy.component {
   methods = {
     bindChangeDate(e) {
       const val = e.detail.value
-      // console.log('bindChangeDate...', val)
+
       this.year = this.years[val[0]]
       this.month = this.months[val[1]]
       this.day = this.days[val[2]]
@@ -230,7 +224,7 @@ export default class DatePicker extends wepy.component {
       const val = e.detail.value
       this.hour = this.hours[val[0]]
       this.minute = this.minutes[val[1]]
-      // console.log('bindChangeTime...', val[0])
+
     },
     cancel() {
       this.hidden = true
@@ -238,17 +232,14 @@ export default class DatePicker extends wepy.component {
     sumbit() {
       this.hidden = true
       this.curPickTime = this.year + '.' + this.month + '.' + this.day + ' ' + this.hour + ':' + this.minute
-      // console.log('sumbit...', this.month, this.day, this.curPickTime)
     }
   }
   events = {
     'broadcast-initDatePicker': function (args) {
-      // console.log('broadcast-initDatePicker...', args)
       this.getParentDate(args.curPickTime)
     }
   }
   onLoad() {
-    // console.log('onLoad...', this.hidden)
     this.initDatePicker()
   }
 }

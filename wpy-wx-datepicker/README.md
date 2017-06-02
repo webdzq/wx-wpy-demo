@@ -1,6 +1,6 @@
 # 微信小程序 wepyjs 第三方datePicker组件
 
-![datePicker](https://github.com/webdzq/wx-wpy-demo/blob/master/wpy-wx-datepicker/datepicker.gif)
+![datePicker](https://github.com/webdzq/wx-wpy-demo/tree/master/wpy-wx-datepicker/datepicker.gif)
 
 
 ## 说明
@@ -44,4 +44,4 @@ this.$broadcast('broadcast-initDatePicker', {
 ```
 
 ## 更多说明
-参考[github源码地址](https://github.com/webdzq/wx-wpy-demo/tree/master/wpy-wx-datePicker)。
+参考[github源码地址](https://github.com/webdzq/wx-wpy-demo/tree/master/wpy-wx-datepicker)。

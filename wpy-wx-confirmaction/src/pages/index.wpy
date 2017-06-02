@@ -1,0 +1,80 @@
+<style lang="less">
+
+</style>
+
+<template>
+  <view class="container">
+    <panel>
+      <view class="weui-cells weui-cells_after-title">
+        <view bindtap="delAction"> 删除</view>
+      </view>
+    </panel>
+    <CofirmAction :cofirmhidden.sync="cofirmhidden" :actionTitle.sync="actionTitle" />
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Panel from '../components/panel'
+import CofirmAction from '../components/confirmAction'
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: 'cofirmAction'
+  }
+  components = {
+    panel: Panel,
+    CofirmAction: CofirmAction
+  }
+  data = {
+    cofirmhidden: false,
+    actionTitle: 'hello wxwepy'
+  }
+  computed = {
+    now() {
+      return +new Date()
+    }
+  }
+  methods = {
+    delAction() {
+      const that = this
+      this.cofirmhidden = true
+      this.actionTitle = '确定要删除吗'
+      CofirmAction.initAction({
+        confirm() {
+          console.log('confirm...')
+          that.cofirmhidden = false
+          wx.showToast({
+            title: '删除成功',
+            duration: 3000
+          })
+        },
+        cancel() {
+          console.log('cancel...')
+          that.cofirmhidden = false
+          wx.showToast({
+            title: '取消删除',
+            duration: 3000
+          })
+        }
+      })
+    }
+  }
+  events = {
+    'emit-action-cofirm': (...args) => {
+      console.log('emit-action-cofirm', args)
+      this.cofirmhidden = false
+    },
+    'emit-action-cancel': (...args) => {
+      console.log('emit-action-cancel', args)
+    }
+  }
+  onLoad() {
+    let self = this
+    this.$parent.getUserInfo(function (userInfo) {
+      if (userInfo) {
+        self.userInfo = userInfo
+      }
+    })
+  }
+}
+</script>

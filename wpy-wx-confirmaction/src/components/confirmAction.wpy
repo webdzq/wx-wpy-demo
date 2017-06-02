@@ -1,0 +1,102 @@
+<style lang="less">
+.confirm-action {
+  background-color: #fff;
+  z-index: 111;
+  text-align: center;
+  width: 100%;
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+}
+
+.confirm-block {
+  border: 1px solid #eee;
+  padding: 5px 0px;
+}
+
+.action-cofirm-btn {
+  color: red;
+  cursor: pointer;
+}
+
+.action-cancel-btn {
+  border-top: 3px solid #eee;
+  cursor: pointer;
+}
+
+.action-title {
+  color: #999;
+  font-size: 14px;
+}
+</style>
+
+<template>
+  <view class="confirm-action" wx-if="{{cofirmhidden}}">
+    <view class="weui-flex confirm-block action-title">
+      <view class="weui-flex__item">
+        <view class="placeholder">{{actionTitle}}</view>
+      </view>
+    </view>
+    <view class="weui-flex confirm-block action-cofirm-btn" bindtap="actionCofirmTapHandler">
+      <view class="weui-flex__item">
+        <view class="placeholder">{{cofirmTitle}}</view>
+      </view>
+    </view>
+    <view class="weui-flex confirm-block action-cancel-btn" bindtap="actionCancelTapHandler">
+      <view class="weui-flex__item">
+        <view class="placeholder">{{cancelTitle}}</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class ConfirmAction extends wepy.component {
+  props = {
+    cofirmhidden: {
+      type: Boolean,
+      default: false
+    },
+    actionTitle: {
+      type: String,
+      default: '可以是一个提示标题'
+    }
+  }
+  data = {
+    cofirmTitle: '确定',
+    cancelTitle: '取消'
+  }
+  computed = {
+    now() {
+      return +new Date()
+    }
+  }
+  static proxy = {
+    cofirm: '',
+    cancel: ''
+  }
+  static initAction(args) {
+    let handler = {
+      get: function (target, name) {
+        if (name === 'cofirm') {
+          args.confirm()
+        } else if (name === 'cancel') {
+          args.cancel()
+        }
+        return name
+      }
+    }
+    ConfirmAction.proxy = new Proxy(args, handler)
+  }
+  methods = {
+    actionCofirmTapHandler(evt) {
+      this.$emit('emit-action-cofirm', ConfirmAction.proxy.cofirm)
+    },
+    actionCancelTapHandler(evt) {
+      this.$emit('emit-action-cancel', ConfirmAction.proxy.cancel)
+    }
+  }
+  onLoad() { }
+}
+</script>
