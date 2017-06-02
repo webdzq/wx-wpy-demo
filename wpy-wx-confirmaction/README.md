@@ -1,15 +1,15 @@
-# 微信小程序 wepyjs 第三方datePicker组件
+# 微信小程序 wepyjs 第三方confirmAction组件
 
-![datePicker](https://github.com/webdzq/wx-wpy-demo/tree/master/wpy-wx-datepicker/datepicker.gif)
+![datePicker](https://github.com/webdzq/wx-wpy-demo/tree/master/wpy-wx-confirmaction/confirmaction.gif)
 
 
 ## 说明
-官方的datPicker只有time和date两种模式。没有组合形式。所有开发了一个格式YYYY-MM-DD HH:MM的日期组件。
+官方的actionsheet不能满足要求。所有开发了一个带提示和`确定`，`取消`组件。
 此组件依赖于[wepyjs v1.5.2+](https://github.com/wepyjs/wepy)。
 
 
 ## 使用
- 有隐藏，有赋值，有事件触发，比较复杂。请看示例吧
+ 有隐藏，有事件触发，比较复杂。请看示例吧
 
 ### 安装组件
 ```
