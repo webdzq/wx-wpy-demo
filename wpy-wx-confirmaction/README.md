@@ -1,6 +1,6 @@
 # 微信小程序 wepyjs 第三方confirmAction组件
 
-![datePicker](https://github.com/webdzq/wx-wpy-demo/tree/master/wpy-wx-confirmaction/confirmaction.gif)
+![confirmaction](https://github.com/webdzq/wx-wpy-demo/blob/master/wpy-wx-confirmaction/confirmaction.gif)
 
 
 ## 说明
