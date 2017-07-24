@@ -61,9 +61,9 @@
         <view class="placeholder">
           <view class="mini-btn" type="default" size="mini" bindtap="cancel">取消</view>
         </view>
-        <!--< view class="weui-flex__item">
+        < view class="weui-flex__item">
                       <view class="placeholder">{{year}}年{{month}}月{{day}}日 {{hour}}:{{minute}}</view>
-                    </view>   -->
+                    </view>  
         <view class="placeholder placeholder-right">
           <view class="mini-btn" type="default" size="mini" bindtap="sumbit">确定</view>
         </view>
@@ -296,6 +296,7 @@
         this.hidden = true
         this.curPickTime = this.year + '.' + this.month + '.' + this.day + ' ' + this.hour + ':' + this.minute
         // console.log('sumbit...', this.month, this.day, this.curPickTime)
+        // 为了兼容苹果相关产品日期格式支持很少的情况。（不支持yyyy.mm.dd hh:mm）
         const standardtime = new Date(this.year, this.month - 1, this.day, this.hour, this.minute).getTime()
         this.$emit('emit-sumbitTime', this.curPickTime, standardtime)
       }
