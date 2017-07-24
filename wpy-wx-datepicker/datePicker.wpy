@@ -1,246 +1,314 @@
 <style lang="less">
-@import 'style/weui.wxss';
-.date-picker-container {
-  position: fixed;
-  bottom: 0rpx;
-  width: 100%;
-  text-align: center;
-  z-index: 100;
-  background-color: #ccc;
-}
-
-.date-picker-title {
-  padding: 10px 10px 2px;
-}
+  .date-picker-container {
+    position: fixed;
+    bottom: 0rpx;
+    width: 100%;
+    text-align: center;
+    z-index: 100;
+    background-color: #ccc;
+    left: 0px;
+    background: #efeff4;
+  }
+  .date-picker-title {
+    padding: 40rpx 30rpx 30rpx 30rpx;
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .date-picker-opacity {
+    width: 100%;
+    height: 300rpx;
+    background: #000;
+    opacity: 0.5;
+  }
+  .mini-btn {
+    font-size: 34rpx;
+  }
+  .placeholder-right {
+    margin-left: 552rpx;
+    color: #0053ca;
+  }
+  .year {
+    margin-left: 106rpx;
+  }
+  .float-layer {
+    background-color: #000;
+    opacity: 0.5;
+    height: 34%;
+  }
+  .box {
+    height: 100%;
+    z-index: 111;
+    text-align: center;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+  }
+  .year-spac {
+    display: inline-block;
+  }
+  .year-text {
+    color: #888;
+    margin-left: 18rpx;
+  }
 </style>
 
 <template>
-  <view class="date-picker-container" wx-if="{{!hidden}}">
-    <view class="weui-flex date-picker-title">
-      <view class="placeholder">
-        <button class="mini-btn" type="default" size="mini" bindtap="cancel">取消</button>
+  <view class="box" wx-if="{{!hidden}}">
+    <view class="float-layer"></view>
+    <view class="date-picker-container">
+      <view class="weui-flex date-picker-title">
+        <view class="placeholder">
+          <view class="mini-btn" type="default" size="mini" bindtap="cancel">取消</view>
+        </view>
+        <!--< view class="weui-flex__item">
+                      <view class="placeholder">{{year}}年{{month}}月{{day}}日 {{hour}}:{{minute}}</view>
+                    </view>   -->
+        <view class="placeholder placeholder-right">
+          <view class="mini-btn" type="default" size="mini" bindtap="sumbit">确定</view>
+        </view>
       </view>
-      <view class="weui-flex__item">
-        <view class="placeholder">{{year}}年{{month}}月{{day}}日 {{hour}}:{{minute}}</view>
-      </view>
-      <view class="placeholder">
-        <button class="mini-btn" type="default" size="mini" bindtap="sumbit">确定</button>
-      </view>
+      <picker-view indicator-style="height: 35px; border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5;color: #000;" style="width: 100%; height: 358rpx;background: #fff;color: #000;" value="{{value}}" bindchange="bindChangeDate">
+        <picker-view-column>
+          <view class="year" wx:for="{{years}}" wx:key="*this" style="line-height: 35px;height:{{height}}px">
+            <view class="year-spac year-num">{{item}}</view>
+            <view class="year-spac year-text">年</view>
+          </view>
+        </picker-view-column>
+        <picker-view-column>
+          <view wx:for="{{months}}" wx:key="*this" style="line-height: 35px;height:{{height}}px;margin-left:80rpx;margin-right:77rpx;">
+            <view class="year-spac year-num">{{item}}</view>
+            <view class="year-spac year-text">月</view>
+          </view>
+        </picker-view-column>
+        <picker-view-column>
+          <view class="day" wx:for="{{getDays}}" wx:key="*this" style="line-height: 35px;height:{{height}}px;margin-right:120rpx;">
+            <view class="year-spac year-num">{{item}}</view>
+            <view class="year-spac year-text">日</view>
+          </view>
+        </picker-view-column>
+      </picker-view>
+      <picker-view indicator-style="height: 35px;" style="width: 100%; height: 358rpx;bacground: #fff;margin-top: 15rpx;background: #fff; color: #000;" value="{{value1}}" bindchange="bindChangeTime">
+        <picker-view-column>
+          <view wx:for="{{hours}}" wx:key="*this" style="line-height: 35px;height:{{height}}px;margin-left:120rpx;">
+            <view class="year-spac year-num">{{item}}</view>
+            <view class="year-spac year-text">时</view>
+          </view>
+        </picker-view-column>
+        <picker-view-column>
+          <view wx:for="{{minutes}}" wx:key="*this" style="line-height: 35px;height:{{height}}px;margin-right:120rpx;">
+            <view class="year-spac year-num">{{item}}</view>
+            <view class="year-spac year-text">分</view>
+          </view>
+        </picker-view-column>
+      </picker-view>
     </view>
-    <picker-view indicator-style="height: 50px;" style="width: 100%; height: 200px;" value="{{value}}" bindchange="bindChangeDate">
-      <picker-view-column>
-        <view wx:for="{{years}}" wx:key="*this" style="line-height: 50px;height:{{height}}px">{{item}}年</view>
-      </picker-view-column>
-      <picker-view-column>
-        <view wx:for="{{months}}" wx:key="*this" style="line-height: 50px;height:{{height}}px">{{item}}月</view>
-      </picker-view-column>
-      <picker-view-column>
-        <view wx:for="{{getDays}}" wx:key="*this" style="line-height: 50px;height:{{height}}px">{{item}}日</view>
-      </picker-view-column>
-    </picker-view>
-    <picker-view indicator-style="height: 50px;" style="width: 100%; height: 100px;" value="{{value1}}" bindchange="bindChangeTime">
-      <picker-view-column>
-        <view wx:for="{{hours}}" wx:key="*this" style="line-height: 50px;height:{{height}}px">{{item}}时</view>
-      </picker-view-column>
-      <picker-view-column>
-        <view wx:for="{{minutes}}" wx:key="*this" style="line-height: 50px;height:{{height}}px">{{item}}分</view>
-      </picker-view-column>
-    </picker-view>
   </view>
 </template>
 
 <script>
-import wepy from 'wepy'
-export default class DatePicker extends wepy.component {
-  props = {
-    hidden: {
-      type: Boolean,
-      default: false,
-      twoWay: true
-    },
-    curPickTime: {
-      type: String,
-      default: '',
-      twoWay: true
+  import wepy from 'wepy'
+  export default class DatePicker extends wepy.component {
+    props = {
+      hidden: {
+        type: Boolean,
+        default: false,
+        twoWay: true
+      },
+      curPickTime: {
+        type: String,
+        default: '',
+        twoWay: true
+      }
     }
-  }
-  data = {
-    height: 50,
-    year: '',
-    month: '',
-    day: '',
-    hour: '',
-    minute: '',
-    years: [],
-    months: [],
-    days: [],
-    hours: [],
-    minutes: [],
-    startYear: 2000,
-    value: [1, 0, 0],
-    value1: [0, 0]
-  }
-  computed = {
-    getDays() {
-      const dayNum = this.getDayNum(this.year, this.month) || 31
-      let tmpdays = []
+    data = {
+      height: 35,
+      year: '',
+      month: '',
+      day: '',
+      hour: '',
+      minute: '',
+      years: [],
+      months: [],
+      days: [],
+      hours: [],
+      minutes: [],
+      startYear: 2000,
+      value: [1, 0, 0],
+      value1: [0, 0]
+    }
+    computed = {
+      getDays() {
+        const dayNum = this.getDayNum(this.year, this.month) || 31
+        let tmpdays = []
+        for (let i = 1; i <= dayNum; i++) {
+          if (i < 10) {
+            i = '0' + i
+          }
+          tmpdays.push(i)
+        }
+        this.days = tmpdays
+        // console.log('watch..month..=', dayNum, tmpdays)
+        return this.days
+      }
+    }
+    resolveDate(vtime) {
+      const datetime = vtime || '2000.1.1 00:00'
+      // console.log('resolveDate=', datetime)
+      let dateTimeArr = datetime.split(' ')
+      const date = dateTimeArr[0]
+      const time = dateTimeArr[1]
+      // console.log('resolveDate=', date, time)
+      const dateArr = date.split('.')
+      const timeArr = time.split(':')
+      const year = dateArr[0]
+      const month = dateArr[1]
+      const day = dateArr[2]
+      const hour = timeArr[0]
+      const minute = timeArr[1]
+      return {
+        year: year,
+        month: month,
+        day: day,
+        hour: hour,
+        minute: minute
+      }
+    }
+    getParentDate(curPickTime) {
+      // console.log('onShow..curPickTime=', this.curPickTime)
+      const dateTime = this.resolveDate(curPickTime)
+      this.year = dateTime.year
+      this.month = dateTime.month
+      this.day = dateTime.day
+      this.minute = dateTime.minute
+      this.hour = dateTime.hour
+      this.value[0] = this.year - this.startYear
+      this.value[1] = this.month - 1
+      this.value[2] = this.day - 1
+      this.value1[0] = this.hour
+      this.value1[1] = this.minute
+      return this.curPickTime
+    }
+    initDatePicker() {
+      // console.log('initDatePicker...', this.curPickTime)
+      const date = new Date()
+      const years = []
+      const months = []
+      const days = []
+      const hours = []
+      const minutes = []
+      this.year = date.getFullYear() || this.startYear
+      this.month = date.getMonth() + 1 || '01'
+      this.day = date.getDate() || '01'
+      this.hour = date.getHours() || '00'
+      this.minute = date.getMinutes() || '00'
+      this.month = this.month < 10 ? '0' + this.month : this.month
+      this.day = this.day < 10 ? '0' + this.day : this.day
+      this.hour = this.hour < 10 ? '0' + this.hour : this.hour
+      this.minute = this.minute < 10 ? '0' + this.minute : this.minute
+      for (let i = 2000; i <= date.getFullYear() + 50; i++) {
+        years.push(i)
+      }
+      for (let i = 1; i <= 12; i++) {
+        if (i < 10) {
+          i = '0' + i
+        }
+        months.push(i)
+      }
+      const dayNum = this.getDayNum(this.year, this.month)
       for (let i = 1; i <= dayNum; i++) {
         if (i < 10) {
           i = '0' + i
         }
-        tmpdays.push(i)
+        days.push(i)
       }
-      this.days = tmpdays
-      return this.days
-    }
-  }
-  resolveDate(vtime) {
-    const datetime = vtime || '2000.01.01 00:00'
-    let dateTimeArr = datetime.split(' ')
-    const date = dateTimeArr[0]
-    const time = dateTimeArr[1]
-    const dateArr = date.split('.')
-    const timeArr = time.split(':')
-    const year = dateArr[0]
-    const month = dateArr[1]
-    const day = dateArr[2]
-    const hour = timeArr[0]
-    const minute = timeArr[1]
-    return {
-      year: year,
-      month: month,
-      day: day,
-      hour: hour,
-      minute: minute
-    }
-  }
-  getParentDate(curPickTime) {
-    const dateTime = this.resolveDate(curPickTime)
-    this.year = dateTime.year
-    this.month = dateTime.month
-    this.day = dateTime.day
-    this.minute = dateTime.minute
-    this.hour = dateTime.hour
-    this.value[0] = this.year - this.startYear
-    this.value[1] = this.month - 1
-    this.value[2] = this.day - 1
-    this.value1[0] = this.hour
-    this.value1[1] = this.minute
-    return this.curPickTime
-  }
-  initDatePicker() {
-    const date = new Date()
-    const years = []
-    const months = []
-    const days = []
-    const hours = []
-    const minutes = []
-    this.year = date.getFullYear() || this.startYear
-    this.month = date.getMonth() + 1 || '01'
-    this.day = date.getDate() || '01'
-    this.hour = date.getHours() || '00'
-    this.minute = date.getMinutes() || '00'
-    this.month = this.month < 10 ? '0' + this.month : this.month
-    this.day = this.day < 10 ? '0' + this.day : this.day
-    this.hour = this.hour < 10 ? '0' + this.hour : this.hour
-    this.minute = this.minute < 10 ? '0' + this.minute : this.minute
-    for (let i = 2000; i <= date.getFullYear() + 50; i++) {
-      years.push(i)
-    }
-    for (let i = 1; i <= 12; i++) {
-      if (i < 10) {
-        i = '0' + i
-      }
-      months.push(i)
-    }
-    const dayNum = this.getDayNum(this.year, this.month)
-    for (let i = 1; i <= dayNum; i++) {
-      if (i < 10) {
-        i = '0' + i
-      }
-      days.push(i)
-    }
-    for (let i = 0; i <= 23; i++) {
-      if (i < 10) {
-        i = '0' + i
-      }
-      hours.push(i)
-    }
-    for (let i = 0; i <= 59; i++) {
-      if (i < 10) {
-        i = '0' + i
-      }
-      minutes.push(i)
-    }
-    this.years = years
-    this.months = months
-    this.days = days
-    this.hours = hours
-    this.minutes = minutes
-  }
-  getDayNum(vyear, vmonth) {
-    const that = this
-    let year = vyear
-    let month = vmonth
-    const dataObj = {
-      '01': 31,
-      '02': (function () {
-        if (that.isLeapYear(year)) {
-          return 29
-        } else {
-          return 28
+      for (let i = 0; i <= 23; i++) {
+        if (i < 10) {
+          i = '0' + i
         }
-      })(),
-      '03': 31,
-      '04': 30,
-      '05': 31,
-      '06': 30,
-      '07': 31,
-      '08': 31,
-      '09': 30,
-      '10': 31,
-      '11': 30,
-      '12': 31
+        hours.push(i)
+      }
+      for (let i = 0; i <= 59; i++) {
+        if (i < 10) {
+          i = '0' + i
+        }
+        minutes.push(i)
+      }
+      this.years = years
+      this.months = months
+      this.days = days
+      this.hours = hours
+      this.minutes = minutes
     }
-    return dataObj[month]
-  }
-  isLeapYear(vyear) {
-    const year = vyear || 2000
-    if (((year % 4) === 0 && (year % 100) !== 0) || (year % 400) === 0) {
-      return true
-    } else {
-      return false
+    getDayNum(vyear, vmonth) {
+      // console.log('getDayNum..', vyear, vmonth)
+      const that = this
+      let year = vyear
+      let month = vmonth
+      const dataObj = {
+        '01': 31,
+        '02': (function() {
+          if (that.isLeapYear(year)) {
+            return 29
+          } else {
+            return 28
+          }
+        })(),
+        '03': 31,
+        '04': 30,
+        '05': 31,
+        '06': 30,
+        '07': 31,
+        '08': 31,
+        '09': 30,
+        '10': 31,
+        '11': 30,
+        '12': 31
+      }
+      return dataObj[month]
+    }
+    isLeapYear(vyear) {
+      const year = vyear || 2000
+      if (((year % 4) === 0 && (year % 100) !== 0) || (year % 400) === 0) {
+        return true
+      } else {
+        return false
+      }
+    }
+    methods = {
+      bindChangeDate(e) {
+        const val = e.detail.value
+        // console.log('bindChangeDate...', val)
+        this.year = this.years[val[0]]
+        this.month = this.months[val[1]]
+        this.day = this.days[val[2]]
+      },
+      bindChangeTime(e) {
+        const val = e.detail.value
+        this.hour = this.hours[val[0]]
+        this.minute = this.minutes[val[1]]
+        // console.log('bindChangeTime...', val[0])
+      },
+      cancel() {
+        this.hidden = true
+      },
+      sumbit() {
+        this.hidden = true
+        this.curPickTime = this.year + '.' + this.month + '.' + this.day + ' ' + this.hour + ':' + this.minute
+        // console.log('sumbit...', this.month, this.day, this.curPickTime)
+        const standardtime = new Date(this.year, this.month - 1, this.day, this.hour, this.minute).getTime()
+        this.$emit('emit-sumbitTime', this.curPickTime, standardtime)
+      }
+    }
+    events = {
+      'broadcast-initDatePicker': function(args) {
+        // console.log('broadcast-initDatePicker...', args)
+        this.getParentDate(args.curPickTime)
+      }
+    }
+    onLoad() {
+      // console.log('onLoad...', this.hidden)
+      this.initDatePicker()
     }
   }
-  methods = {
-    bindChangeDate(e) {
-      const val = e.detail.value
-
-      this.year = this.years[val[0]]
-      this.month = this.months[val[1]]
-      this.day = this.days[val[2]]
-    },
-    bindChangeTime(e) {
-      const val = e.detail.value
-      this.hour = this.hours[val[0]]
-      this.minute = this.minutes[val[1]]
-
-    },
-    cancel() {
-      this.hidden = true
-    },
-    sumbit() {
-      this.hidden = true
-      this.curPickTime = this.year + '.' + this.month + '.' + this.day + ' ' + this.hour + ':' + this.minute
-    }
-  }
-  events = {
-    'broadcast-initDatePicker': function (args) {
-      this.getParentDate(args.curPickTime)
-    }
-  }
-  onLoad() {
-    this.initDatePicker()
-  }
-}
 </script>
