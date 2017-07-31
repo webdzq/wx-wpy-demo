@@ -1,0 +1,40 @@
+<style lang="less">
+    .weui-cell_input {
+        color: #000000;
+        &:after {
+            border-bottom: 1rpx solid #E5E5E5;
+            color: #E5E5E5;
+        }
+        &:before {
+            border-top: 1rpx solid #E5E5E5;
+            color: #E5E5E5;
+        }
+        .weui-label {
+            width: 180rpx;
+        }
+        .placeholder-class {
+            color: #B2B2B2;
+        }
+    }
+</style>
+
+<template>
+    <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+            <slot name="label">
+                <view class="weui-label">账号</view>
+            </slot>
+        </view>
+        <view class="weui-cell__bd">
+            <slot name="input">
+                <input name="loginName" class="weui-input" placeholder-class="placeholder-class" placeholder="请输入账号" />
+            </slot>
+        </view>
+        <slot></slot>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    export default class Inputs extends wepy.component {}
+</script>

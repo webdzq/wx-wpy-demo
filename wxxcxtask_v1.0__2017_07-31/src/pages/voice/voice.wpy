@@ -1,0 +1,31 @@
+<style lang="less">
+.voice-container {
+  background-color: #fff;
+}
+</style>
+
+
+<template>
+  <view class="voice-container">
+    hello voice
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class Voice extends wepy.component {
+  config = {
+  }
+  components = {}
+  mixins = []
+  data = {}
+  computed = {
+    now() {
+      return +new Date()
+    }
+  }
+  methods = {}
+  events = {}
+  onLoad() { }
+}
+</script>

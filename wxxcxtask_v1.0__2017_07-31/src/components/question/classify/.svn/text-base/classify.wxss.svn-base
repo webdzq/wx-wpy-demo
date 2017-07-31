@@ -1,0 +1,55 @@
+.question .classify .simple .options {
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
+  padding-left: 60rpx;
+}
+
+.question .classify .simple .options .option {
+  margin: 30rpx 30rpx 0 0;
+  width: 126rpx;
+  height: 126rpx;
+  background-color: #e5e5e5;
+  border-radius: 17rpx;
+}
+
+.question .classify .options .option image {
+  width: 126rpx;
+  height: 126rpx;
+}
+
+.question .classify .groups {
+  padding: 0 0 0 60rpx;
+}
+
+.question .classify .groups .group .group_name {
+  font-size: 28rpx;
+  color: #000;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding-left: 30rpx;
+}
+
+.question .classify .groups .group {
+  margin: 30rpx 0 0 0;
+  width: 655rpx;
+  border-radius: 17rpx;
+  background-color: #e5e5e5;
+  padding-bottom: 40rpx;
+}
+
+.question .classify .full .groups .group .options {
+  border-top: 1rpx solid #cbcbcb;
+  padding-left: 30rpx;
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
+}
+
+.question .classify .group .options .option {
+  margin: 30rpx 30rpx 0 0;
+  width: 126rpx;
+  height: 126rpx;
+  background-color: #fff;
+  border-radius: 17rpx;
+}

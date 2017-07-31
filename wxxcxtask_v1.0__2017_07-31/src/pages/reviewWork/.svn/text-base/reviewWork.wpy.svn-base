@@ -1,0 +1,1111 @@
+<style lang="less">
+.reviewWork {
+  height: 100%;
+  background: #efeff4;
+  .scroll-view-item_H {
+    display: inline-block;
+    width: 100%;
+    .nav {
+      background-color: #fff;
+      padding: 0 30rpx;
+      border-bottom: 1px solid #e5e5e5;
+      height: 95rpx;
+      line-height: 95rpx;
+      .prev,
+      .next {
+        font-size: 28rpx;
+        color: #000;
+      }
+      .progress {
+        text-align: center;
+        color: #888;
+        font-size: 28rpx;
+        .current {
+          color: #0052cc;
+          display: inline;
+        }
+      }
+    }
+    .display_container {
+      margin-top: 30rpx;
+      margin-bottom: 80rpx;
+      border-top: 1px solid #e5e5e5;
+      border-bottom: 1px solid #e5e5e5;
+      .content_container {
+        background-color: #fff;
+        border-bottom: 1px solid #e5e5e5;
+        margin-bottom: 30rpx;
+        &.answers_container {
+          flex-direction: column;
+          .answer_image {
+            display: block;
+            overflow: visible;
+            max-width: 690rpx;
+          }
+        }
+        .container_label {
+          font-size: 28rpx;
+          color: #888;
+          padding: 38rpx 0 22rpx 30rpx;
+        }
+        .empty_answer_tip {
+          text-align: center;
+          font-size: 28rpx;
+          border-top: 1px solid #e5e5e5;
+          padding: 30rpx;
+        }
+        .detail_container {
+          // border-top: 1px solid #e5e5e5;
+          padding: 0 30rpx;
+          margin-bottom: 30rpx;
+        }
+      }
+    }
+    .marking_container {
+      position: relative;
+      bottom: 0rpx;
+      width: 100%;
+      height: 98rpx;
+      line-height: 98rpx;
+      background-color: #eee;
+      text-align: center;
+      vertical-align: middle;
+      padding-top: 34rpx;
+    }
+  }
+}
+
+.wxParse-img {
+  width: 690rpx;
+}
+
+image {
+  display: block;
+  overflow: visible;
+}
+
+button[size="mini"] {
+  display: inline-block;
+  line-height: 2.3;
+  font-size: 13px;
+  padding: 0;
+  width: 108rpx;
+}
+
+.voice-block {
+  width: 600rpx;
+  height: 70rpx;
+  border: 1px solid #d6d5d6;
+  border-radius: 10rpx;
+  background-color: #FBFAFC;
+}
+
+.container_label_speech {
+  background: #efeff4;
+}
+
+.upload-again {
+  height: 70rpx !important;
+  line-height: 70rpx !important;
+  margin-top: 8px !important;
+}
+
+.weui-cell-delect-plus {
+  width: 54rpx;
+  height: 54rpx;
+  display: inline-block;
+  margin-top: 12px;
+}
+
+.weui-cell-delect {
+  width: 100%;
+  height: 100%;
+  display: block;
+  padding: 0px;
+}
+
+.weui-cell-warning {
+  width: 32rpx;
+  height: 32rpx;
+  float: left;
+  line-height: 70rpx !important;
+  margin-top: 34rpx;
+  margin-right: 20rpx;
+  padding: 0px;
+}
+
+.weui-cell-play-len {
+  display: inline-block;
+  float: right;
+  line-height: 70rpx !important;
+  height: 70rpx !important;
+}
+
+.speech_box {
+  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid #e5e5e5;
+}
+
+.voice {
+  margin: 36rpx 0rpx 10rpx 0rpx;
+}
+
+.weui-cell-play-plus {
+  height: 70rpx;
+}
+
+.voice-time {
+  margin-left: 10rpx;
+}
+</style>
+
+<template>
+  <import src="../../components/question/question.wxml" />
+  <view class="reviewWork" id="the-id">
+    <view class="scroll-view-item_H">
+      <view class="weui-flex nav">
+        <view class="prev" @tap="preWork">{{prevButtonName}}</view>
+        <view class="weui-flex__item progress">
+          <view class="current">{{question.counter+1}}</view>/{{parsedQuestionList.length}}
+        </view>
+        <view class="next" @tap="nextWork">{{nextButtonName}}</view>
+      </view>
+      <view bindtouchmove="touchmove" bindtouchstart="touchstart" bindtouchend="touchend" class="display_container">
+        <view class="weui-flex content_container">
+          <template is="question" data="{{question: question.questions, display: 'simple'}}">
+          </template>
+        </view>
+        <view class="flex-wrp content_container answers_container">
+          <view class="container_label">作答详情</view>
+          <block wx:if="{{parsedJsonAnswer.length > 0 }}">
+            <block wx:for-items="{{parsedJsonAnswer}}" wx:for-index="aindex" wx:for-item="aitem" wx:key="*this">
+              <view class="flex-item flex-item-V detail_container">
+                <navigator url="../canvas/canvas?pad={{pad}}&image={{aitem.imageSrc}}&jsonAnswer={{jsonAnswerStr}}" hover-class="navigator-hover">
+                  <image class="answer_image" data-src="{{aitem.imageSrc}}" src="{{aitem.imageSrc}}" bindload="wxParseAnswerImgLoad" mode="aspectFit" style="width:{{aitem.width}}px;height:{{aitem.height}}px;" />
+                </navigator>
+              </view>
+            </block>
+          </block>
+          <block wx:else>
+            <view class="empty_answer_tip">本题未作答</view>
+          </block>
+        </view>
+        <block wx:if="{{jsonAudioComment.length > 0 }}">
+          <view class="flex-wrp content_container">
+            <view class="container_label container_label_speech">语音批语</view>
+            <view class="speech_box">
+              <view class="voice">
+                <block wx:for-items="{{jsonAudioComment}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
+                  <view class="weui-flex detail_container">
+                    <block wx:if="{{!!item.isTmpFile}}">
+                      <view style="text-align:center;">
+                        <image class="weui-cell-warning" src="/images/warning.png"></image>
+                        <view bindtap="reupAudio" data-index="{{index}}" data-item="{{item}}" class="weui-btn mini-btn upload-again" type="default" size="mini">重新上传</view>
+                      </view>
+                    </block>
+                    <view class="weui-flex__item">
+                      <view class="placeholder voice-block" style="width:{{100+voiceWidthArr[index]}}rpx">
+                        <view class="weui-cell-play-plus" bindlongtap="delAudio" data-index="{{index}}" data-len="{{item.length}}" data-src="{{item.url}}">
+                          <image bindtap="playVoice" data-index="{{index}}" data-len="{{item.length}}" data-src="{{item.url}}" class="weui-cell-play" src="{{playImageArr[index]}}" style="width:32rpx;height:32rpx;display:inline-block;padding:18rpx 0rpx 18rpx 18rpx;"></image>
+                        </view>
+                      </view>
+                    </view>
+                    <view>
+                      <view class="placeholder voice-time">
+                        <!--<view bindtap="delAudio" data-index="{{index}}" data-url="{{item.url}}" class="weui-cell-delect-plus" type="default" size="mini">
+                                                                            <image class="weui-cell-delect" src="/images/del.png" mode="scaleToFill"></image>
+                                                                          </view>-->
+                        <image class="weui-cell-delect" src="/images/del.png" mode="scaleToFill"></image>
+                      </view>-->
+                      <view>
+                        <text class="weui-cell-play-len" style="">{{item.length}}"</text>
+                      </view>
+                    </view>
+                  </view>
+              </view>
+              </block>
+            </view>
+          </view>
+      </view>
+      </block>
+    </view>
+    <view class="weui-flex marking_container">
+      <view>
+        <Voice :jsonAudioComment.sync="jsonAudioComment"></Voice>
+      </view>
+      <marking :question.sync="question"></marking>
+    </view>
+  </view>
+  </view>
+  <toast />
+  <!--<CofirmAction :cofirmhidden.sync="cofirmhidden" :actionTitle.sync="actionTitle" />-->
+  <audio src="{{audioUrl}}" id="myAudio" bindended="playOver" data-index=""></audio>
+</template>
+
+<script>
+import wepy from 'wepy'
+import DetailWork from './detailWork'
+import toast from 'wepy-com-toast'
+import Voice from './voice'
+import API from '../../util/api.js'
+import Question from '../../components/question/question.js'
+// import CofirmAction from '../../components/confirmAction/confirmAction'
+import Marking from './marking/marking'
+export default class ReviewWork extends wepy.page {
+  config = {
+    navigationBarTitleText: '批改作业'
+  }
+  components = {
+    DetailWork: DetailWork,
+    toast: toast,
+    Voice: Voice,
+    marking: Marking
+  }
+  mixins = []
+  data = {
+    playImage: '/images/play.png',
+    playingImg: '/images/playing.gif',
+    playImageArr: ['/images/play.png', '/images/play.png', '/images/play.png', '/images/play.png', '/images/play.png'],
+    stem: {},
+    voiceWidth: 0,
+    voiceW: 519,
+    voiceWidthArr: [0, 0, 0, 0, 0],
+    cacthIndex: 999,
+    audioUrl: '',
+    unCheckedUsers: [],
+    userList: [],
+    user: {
+      isFirst: false,
+      isLast: false,
+      realname: ''
+    },
+    questionList: [],
+    parsedQuestionList: [],
+    question: {
+      isFirst: false,
+      isLast: false,
+      questions: {
+        pad: {
+          teachercheck: {}
+        }
+      }
+    },
+    prevButtonName: '',
+    nextButtonName: '',
+    cofirmhidden: false,
+    actionTitle: '删除后不可恢复，确定要删除吗？',
+    tempFilePath: '',
+    scrollTop: 0,
+    initpageX: 0,
+    initPageY: 0,
+    endpageX: 0,
+    endpageY: 0,
+    jsonAnswer: [],
+    parsedJsonAnswer: [],
+    jsonAnswerStr: '',
+    pad: {},
+    jsonAudioComment: [],
+    audioAction: {
+      method: 'pause'
+    }
+  }
+  computed = {
+    voiceWidthArr() {
+      const arr = []
+      const that = this
+      this.jsonAudioComment.forEach(function (detail, index) {
+        let len = (detail.length / 60) * that.voiceW
+        arr.push(len)
+      })
+      return arr
+    },
+    prevButtonName() {
+      if (this.question.isFirst) {
+        if (this.user.isFirst) {
+          return ''
+        } else {
+          return '上一同学'
+        }
+      } else {
+        return '上一题'
+      }
+    },
+    nextButtonName() {
+      if (this.question.isLast) {
+        if (this.user.isLast) {
+          return '完成'
+        } else {
+          return '下一同学'
+        }
+      } else {
+        return '下一题'
+      }
+    }
+  }
+  methods = {
+    playOver(e) {
+      console.log('playOver=', e)
+      this.playImageArr[this.cacthIndex] = this.playImage
+      this.$apply()
+    },
+    playVoice(e) {
+      // console.log('playVoice..e..',e)
+      const src = e.currentTarget.dataset.src
+      const index = e.currentTarget.dataset.index
+      const len = e.currentTarget.dataset.len
+      console.log('playVoice..src..', e, index, src)
+      if (this.cacthIndex === index) {
+        if (!this.playing) {
+          this.audioPlay(src, index, len)
+        } else {
+          this.audioPause(src, index, len)
+        }
+      } else {
+        this.audioPause(src, index, len)
+        this.audioPlay(src, index, len)
+      }
+      this.cacthIndex = index
+    },
+    wxParseImgLoad(e) {
+      // const that = this
+      const recal = Question.wxAutoImageCal(e.detail.width, e.detail.height, this, 'image', 120)
+      // const idx = e.target.dataset.idx
+      this.parsedQuestionList.forEach(function (question, qIndex) {
+        question.questions = Question.resizeContentImage(e.target.dataset.from, question.questions, e.target.dataset.src, recal.imageWidth, recal.imageheight)
+      })
+    },
+    wxParseAnswerImgLoad(e) {
+      // const that = this
+      const recal = Question.wxAutoImageCal(e.detail.width, e.detail.height, this, 'image', 30)
+      const src = e.target.dataset.src
+      this.parsedJsonAnswer.forEach(function (answer) {
+        if (answer.imageSrc === src) {
+          answer.height = recal.imageheight
+          answer.width = recal.imageWidth
+          return false
+        }
+      })
+    },
+    reupAudio(e) {
+      // 重新上传
+      const that = this
+      const id = e.target.dataset.index
+      const item = e.target.dataset.item
+      console.log('reupAudio,item=', item)
+      this.addAudio({
+        fileUrl: item.url,
+        len: item.length,
+        from: 'reupAudio'
+      }, function (res) {
+        console.log('reupAudio=', res)
+        let data = JSON.parse(res.data)
+        if (data.status.code === 0) {
+          that.jsonAudioComment.splice(id, 1, data.data[0])
+          // that.jsonAudioComment.push(data.data[0])
+          // console.log("jsonAudioComment=", that.jsonAudioComment, data[0])
+          that.mergePad({
+            jsonAudioComment: that.jsonAudioComment
+          })
+          wx.showToast({
+            title: '语音发送成功',
+            icon: 'success',
+            duration: 3000
+          })
+        } else {
+          that.$invoke('toast', 'show', {
+            title: data.status.desc
+          })
+        }
+        that.$apply()
+      })
+    },
+    delAudio(e) {
+      // 删除语音
+      const that = this
+      const id = e.currentTarget.dataset.index
+      const url = e.currentTarget.dataset.src
+      console.log('delAudio=', id, url, that.jsonAudioComment)
+      this.cofirmhidden = true
+      wx.showModal({
+        title: '删除提示',
+        content: this.actionTitle,
+        confirmText: '确定',
+        cancelText: '取消',
+        success: function (res) {
+          console.log(res)
+          if (res.confirm) {
+            console.log('用户点击主操作')
+            const param = {
+              url: API.HOST_URI + API.delAudioComment,
+              data: Object.assign({
+                padId: that.getCurrentQuestions().pad.id,
+                uid: that.user.id,
+                url: url
+              }, wepy.getStorageSync('xcx_yixueyilian_privacy')),
+              method: 'POST', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
+              header: {
+                'content-type': 'application/x-www-form-urlencoded'
+              }, // 设置请求的 header
+              success: function (res) {
+                API.validateLogIn(res.data.status.code, function () {
+                  wx.showToast({
+                    title: '语音删除成功',
+                    icon: 'success',
+                    duration: 3000
+                  })
+                  that.jsonAudioComment.splice(id, 1)
+                  that.cofirmhidden = false
+                }, function (code) {
+                  that.$invoke('toast', 'show', {
+                    title: res.data.status.desc
+                  })
+                })
+                that.$apply()
+              },
+              fail: function (res) {
+                // fail
+                // console.log('fail...res=', res)
+                const str = res && res.errMsg
+                if (str.indexOf('timeout') !== -1) {
+                  wx.showToast({
+                    title: '请求超时',
+                    duration: 3000
+                  })
+                }
+                const desc = (res.data && res.data.status.desc) || '删除失败'
+                that.$invoke('toast', 'show', {
+                  title: desc
+                })
+              },
+              complete: function () {
+                // complete
+                that.cofirmhidden = false
+                that.$apply()
+              }
+            }
+            wx.request(param)
+          } else {
+            console.log('用户点击辅助操作')
+            that.cofirmhidden = false
+            that.$apply()
+          }
+        }
+      })
+      // CofirmAction.initAction({
+      //   confirm() {
+      //     // console.log('confirm...')
+      //   },
+      //   cancel() {
+      //     // console.log('cancel...')
+      //   }
+      // })
+    },
+    touchstart(e) {
+      // 左右滑动翻页
+      let touchs = e.touches[0]
+      let pageX = touchs.pageX
+      let pageY = touchs.pageY
+      this.initpageX = pageX
+      this.initpageY = pageY
+      console.log('touchstart=', touchs.pageX, touchs.pageY)
+    },
+    touchend(e) {
+      // 左右滑动翻页
+      console.log('touchend=', this.initpageX, this.endpageX, this.initpageY, this.endpageY)
+      if (this.endpageX === this.initpageX) {
+        return
+      }
+      if (Math.abs(this.endpageY - this.initpageY) > 10) {
+        return
+      }
+      if (this.endpageX < this.initpageX - 20) {
+        // 下一页
+        this.methods.nextWork.bind(this)(e)
+      } else if (this.endpageX > this.initpageX + 10) {
+        // 上一页
+        this.methods.preWork.bind(this)(e)
+      }
+    },
+    touchmove(e) {
+      // 左右滑动翻页
+      let touchs = e.touches[0]
+      let pageX = touchs.pageX
+      let pageY = touchs.pageY
+      this.endpageX = pageX
+      this.endpageY = pageY
+      console.log('touchmove=', touchs.pageX, touchs.pageY)
+    },
+    preWork(e) {
+      if (this.prevButtonName === '上一题') {
+        const qIndex = this.question.counter
+        this.question = this.parsedQuestionList[qIndex - 1]
+        const pad = this.getCurrentQuestions().pad
+        this.jsonAnswer = pad.jsonAnswer || []
+        this.jsonAudioComment = pad.jsonAudioComment || []
+        this.$apply()
+        this.$invoke('marking', 'autoCheckUnfinishQuestion')
+        console.log('that.jsonAudioComment=', pad.jsonAudioComment)
+      } else if (this.prevButtonName === '上一同学') {
+        const uIndex = this.user.counter
+        this.user = this.userList[uIndex - 1]
+        const that = this
+        // console.log('preWork,this.user =', this.user, this.userList)
+        wepy.setNavigationBarTitle({
+          title: this.user.realname,
+          success() {
+            that.getQuestionList()
+          }
+        })
+      }
+    },
+    nextWork(e) {
+      let pad = this.getCurrentQuestions().pad
+      if (pad && pad.status === 5) {
+        const qIndex = this.question.counter
+        this.parsedQuestionList[qIndex] = this.question
+        if (this.nextButtonName === '下一题') {
+          const qIndex = this.question.counter
+          this.question = this.parsedQuestionList[qIndex + 1]
+          pad = this.getCurrentQuestions().pad
+          this.jsonAnswer = pad.jsonAnswer || []
+          this.jsonAudioComment = pad.jsonAudioComment || []
+          this.$apply()
+          this.$invoke('marking', 'autoCheckUnfinishQuestion')
+          console.log('that.jsonAudioComment=', pad.jsonAudioComment)
+        } else if (this.nextButtonName === '下一同学') {
+          const uIndex = this.user.counter
+          this.user = this.userList[uIndex + 1]
+          console.log('that.jsonAudioComment=', pad.jsonAudioComment)
+          // console.log('preWork,this.user =', this.user, this.userList, uIndex)
+          let that = this
+          wepy.setNavigationBarTitle({
+            title: this.user.realname,
+            success() {
+              that.$invoke('toast', 'show', {
+                title: '开始批改下一个同学'
+              })
+              that.getQuestionList()
+            }
+          })
+        } else {
+          this.$invoke('toast', 'show', {
+            title: '已完成本次批改'
+          }).then((res) => {
+            wepy.switchTab({
+              url: '../checkWork/checkWork'
+            })
+          })
+        }
+      } else {
+        this.$invoke('toast', 'show', {
+          title: '请先完成本题批改'
+        })
+      }
+    },
+    scroll: function (e) {
+      // console.log("scroll", e)
+    },
+    upper(e) {
+      // 顶部/左边
+      // console.log('upper', e)
+    },
+    lower(e) {
+      // 底部/右边
+      // console.log('lower', e)
+    },
+    onTapAudioBar(e) {
+      const playingStatus = this.question.questions.isPlaying
+      if (playingStatus) {
+        wx.createAudioContext('real_audio_player_' + this.question.id).pause()
+        this.question.questions.isPlaying = !playingStatus
+      } else {
+        wx.createAudioContext('real_audio_player_' + this.question.id).play()
+        this.question.questions.isPlaying = !playingStatus
+      }
+    },
+    audioPlayOver(e) {
+      this.question.questions.isPlaying = false
+    }
+  }
+  addAudio(audioObj, callback) {
+    let that = this
+    let params = {
+      url: API.HOST_URI + API.addAudioComment, // 仅为示例，非真实的接口地址
+      filePath: audioObj.fileUrl,
+      name: 'file',
+      formData: Object.assign({
+        padId: that.getCurrentQuestions().pad.id,
+        uid: that.user.id,
+        length: audioObj.len
+      }, wx.getStorageSync('xcx_yixueyilian_privacy')),
+      success: function (res) {
+        callback(res)
+      },
+      fail(res) {
+        console.log('fail', res)
+        wx.showToast({
+          title: '语音发送失败,请重试',
+          icon: 'fail',
+          image: '',
+          duration: 3000
+        })
+        if (!(audioObj.from && audioObj.from === 'reupAudio')) {
+          that.jsonAudioComment.push({
+            length: audioObj.len,
+            url: audioObj.fileUrl,
+            isTmpFile: true
+          })
+          // console.log('jsonAudioComment=', that.jsonAudioComment, data[0])
+          that.mergePad({
+            jsonAudioComment: that.jsonAudioComment
+          })
+          that.$apply()
+        }
+      },
+      complete() { }
+    }
+    wx.uploadFile(params)
+  }
+  events = {
+    'voice-broadcast': function (args) {
+      // 添加语音
+      console.log('voice-broadcast=', args)
+      let that = this
+      let vfileUrl = args.url || ''
+      let vlen = args.length || 0
+      that.addAudio({
+        fileUrl: vfileUrl,
+        len: vlen
+      }, function (res) {
+        console.log('voice-broadcast', res)
+        let data = JSON.parse(res.data)
+        if (data.status.code === 0) {
+          that.jsonAudioComment.push(data.data[0])
+          // console.log("jsonAudioComment=", that.jsonAudioComment, data[0])
+          that.mergePad({
+            jsonAudioComment: that.jsonAudioComment
+          })
+          wx.showToast({
+            title: '语音发送成功',
+            icon: 'success',
+            duration: 3000
+          })
+        } else {
+          that.$invoke('toast', 'show', {
+            title: data.status.desc
+          })
+          that.jsonAudioComment.push({
+            length: vlen,
+            url: vfileUrl,
+            isTmpFile: true
+          })
+          console.log('jsonAudioComment=', that.jsonAudioComment)
+          that.mergePad({
+            jsonAudioComment: that.jsonAudioComment
+          })
+        }
+        // args[0].complete && args[0].complete()
+        that.$apply()
+        // wx.pageScrollTo({
+        //   scrollTop: 1000
+        // })
+      })
+    },
+    'marking': (...args) => {
+      const that = this
+      let params = {}
+      const questions = this.getCurrentQuestions()
+      const pad = questions.pad
+      const teacherCheck = pad.teachercheck
+      let teacherCheckId = -1
+      // console.log('marking，teacherCheck=', teacherCheck)
+      if (teacherCheck) {
+        teacherCheckId = teacherCheck.id
+      }
+      params.pid = questions.pid
+      params.qid = questions.id
+      params.id = teacherCheckId
+      params.padid = pad.id
+      params.score = args[0].value
+      wepy.request({
+        url: API.HOST_URI + API.submitSubjectiveCheck,
+        data: Object.assign({
+          checkJson: JSON.stringify(params),
+          parentPadid: questions.parentPadid || 0
+        }, wepy.getStorageSync('xcx_yixueyilian_privacy')),
+        success(res) {
+          // console.log('marking，success=', res)
+          API.validateLogIn(res.data.status.code, function () {
+            const data = res.data.property.id
+            that.mergePad({
+              teachercheck: {
+                id: data.id,
+                score: data.score
+              },
+              status: data.status
+            })
+            // console.log('marking,that.question.isLast=', that.question.isLast)
+            if (that.question.isLast) {
+              wepy.request({
+                url: API.HOST_URI + API.finishSubjectiveCheck,
+                data: Object.assign({
+                  uid: that.user.id,
+                  paperId: that.paperId,
+                  AllObjective: 0
+                }, wepy.getStorageSync('xcx_yixueyilian_privacy')),
+                success(res) {
+                  API.validateLogIn(res.data.status.code, function () { }, function (code) {
+                    that.$invoke('toast', 'show', {
+                      title: res.data.status.desc
+                    })
+                  })
+                }
+              })
+            }
+          }, function (code) {
+            that.$invoke('toast', 'show', {
+              title: res.data.status.desc
+            })
+          })
+          that.$apply()
+        },
+        fail(res) {
+          const str = res && res.errMsg
+          if (str.indexOf('timeout') !== -1) {
+            wx.showToast({
+              title: '请求超时',
+              duration: 3000
+            })
+          }
+        }
+      })
+    }
+  }
+  initAudioPlayer() {
+    // url = 'http://ws.stream.qqmusic.qq.com/M500001VfvsJ21xFqb.mp3?guid=ffffffff82def4af4b12b3cd9337d5e7&uin=346897220&vkey=6292F51E1E384E06DCBDC9AB7C49FD713D632D313AC4858BACB8DDD29067D3C601481D36E62053BF8DFEAF74C0A5CCFADD6471160CAF3E6A&fromtag=46'
+    this.audioCtx = wx.createAudioContext('myAudio')
+    this.playing = false
+  }
+  audioPlay(url, index, len) {
+    const that = this
+    this.playImageArr[this.cacthIndex] = this.playImage
+    this.playImageArr[index] = this.playingImg
+    console.log('url=', url)
+    if (url && url.indexOf('.silk') !== -1) {
+      wx.playVoice({
+        filePath: url,
+        success() {
+          console.log('success..')
+        },
+        complete() {
+          console.log('complete..')
+        }
+      })
+      setTimeout(function () {
+        // console.log('...setTimeout...', len)
+        that.playImageArr[index] = that.playImage
+        that.$apply()
+      }, len * 1000)
+    } else {
+      this.audioCtx.setSrc(url)
+      this.audioCtx.play()
+    }
+    this.playing = true
+  }
+  audioSeek(vlen) {
+    const len = vlen || 0
+    this.audioCtx.seek(len)
+    this.playing = false
+  }
+  audioPause(url, index) {
+    this.playImageArr[this.cacthIndex] = this.playImage
+    this.playImageArr[index] = this.playImage
+    console.log('url=', url)
+    if (url.indexOf('.silk') !== -1) {
+      wx.stopVoice()
+    } else {
+      this.audioCtx.pause()
+    }
+    this.playing = false
+  }
+  onPageScroll(e) {
+    // console.log('onPageScroll...', e)
+  }
+  queryMultipleNodes() {
+    var query = wx.createSelectorQuery()
+    query.select('#the-id').boundingClientRect()
+    query.selectViewport().scrollOffset()
+    console.log('selectViewport=', query.selectViewport())
+    query.exec(function (res) {
+      // res[0].top // #the-id节点的上边界坐标
+      // res[1].scrollTop // 显示区域的竖直滚动位置
+      console.log('res=', res)
+    })
+  }
+  getFields() {
+    wx.createSelectorQuery().select('#the-id').fields({
+      dataset: true,
+      size: true,
+      scrollOffset: true
+    }, function (res) {
+      console.log('getFields=', res)
+    }).exec()
+  }
+  getRect() {
+    wx.createSelectorQuery().select('#the-id').boundingClientRect(function (rect) {
+      console.log('rect=', rect)
+    }).exec()
+  }
+  onShow() {
+    // wx.pageScrollTo({
+    //   scrollTop: 1500
+    // })
+    // this.getRect()
+    // this.queryMultipleNodes()
+    // this.getFields()
+    let that = this
+    this.initAudioPlayer()
+    this.$invoke('toast', 'hide', {}).then((d) => {
+      // console.log('toast cancel done')
+    })
+    this.question = {
+      isFirst: false,
+      isLast: false,
+      questions: {
+        pad: {
+          teachercheck: {}
+        }
+      }
+    }
+    this.parsedJsonAnswer = []
+    this.$apply()
+    wepy.request({
+      url: API.HOST_URI + API.getCheckIndex,
+      data: Object.assign({
+        paperId: this.paperId,
+        groupIds: this.groupIds,
+        currentGroupId: this.currentGroupId,
+        qtype: 1
+      }, wepy.getStorageSync('xcx_yixueyilian_privacy')),
+      success(res) {
+        API.validateLogIn(res.data.status.code, function () {
+          const data = res.data.data[0]
+          that.questionList = data.answerInfo
+          that.unCheckedUserId = data.unCheckedUid
+          that.unCheckedQuestionId = data.unCheckedQid
+          that.userList = that.getUserList(data.groupInfo)
+          that.user = that.getUserById()
+          wepy.setNavigationBarTitle({
+            title: that.user.realname
+          })
+          that.parsedQuestionList = that.getParsedQuestionList()
+          that.question = that.getQuestionById()
+          const pad = that.getCurrentQuestions().pad
+          that.parsedJsonAnswer = that.getParsedJsonAnswer(pad.jsonAnswer)
+          that.jsonAnswerStr = JSON.stringify(pad.jsonAnswer)
+          that.pad = JSON.stringify(pad)
+          that.jsonAudioComment = pad.jsonAudioComment || []
+          that.$apply()
+          that.$invoke('marking', 'autoCheckUnfinishQuestion')
+        }, function (code) {
+          that.$invoke('toast', 'show', {
+            title: res.data.status.desc
+          })
+        })
+      },
+      fail(res) {
+        const str = res && res.errMsg
+        if (str.indexOf('timeout') !== -1) {
+          wx.showToast({
+            title: '请求超时',
+            duration: 3000
+          })
+        }
+      }
+    })
+  }
+  getVoiceAuth() {
+    const that = this
+    wx.getSetting({
+      success(res) {
+        if (!res['scope.record']) {
+          wx.authorize({
+            scope: 'scope.record',
+            success() {
+              // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
+            },
+            fail(res) {
+              wx.showModal({
+                title: '提示',
+                content: '您拒绝了授权，将无法使用语音,请重新设置',
+                showCancel: false,
+                success: function (res) {
+                  if (res.confirm) {
+                    console.log('用户点击确定')
+                    wx.openSetting({
+                      success: (res) => {
+                        res.authSetting = {
+                          'scope.record': true
+                        }
+                        that.onShow()
+                      }
+                    })
+                  } else if (res.cancel) {
+                    console.log('用户点击取消')
+                  }
+                }
+              })
+            }
+          })
+        }
+      }
+    })
+  }
+  onLoad(options) {
+    const that = this
+    this.paperId = options.paperId
+    this.groupIds = options.groupIds
+    this.currentGroupId = options.currentGroupId
+    this.getVoiceAuth()
+    wx.getSystemInfo({
+      success: function (res) {
+        console.log(res.model)
+        console.log(res.pixelRatio)
+        console.log(res.windowWidth)
+        console.log(res.windowHeight)
+        console.log(res.screenHeight)
+        console.log(res.language)
+        console.log(res.version)
+        console.log(res.platform)
+        that.windowHeight = res.windowHeight
+      }
+    })
+  }
+  onUnLoad() {
+    // console.log('onUnLoad...')
+  }
+  getUserList(groupInfo) {
+    let userList = []
+    let uIndex = 0
+    groupInfo.forEach(function (group, gIndex) {
+      let users = group.pas
+      users.forEach(function (user, i) {
+        let isFirst = false
+        let isLast = false
+        if (uIndex === 0) {
+          isFirst = true
+        }
+        if (gIndex + 1 === groupInfo.length && i + 1 === users.length) {
+          isLast = true
+        }
+        userList.push(Object.assign(user.user, {
+          counter: uIndex,
+          isFirst: isFirst,
+          isLast: isLast
+        }))
+        uIndex++
+      })
+    })
+    return userList
+  }
+  getParsedQuestionList() {
+    const questionAmount = this.questionList.length
+    this.questionList.forEach(function (question, qIndex) {
+      question.counter = qIndex
+      if (qIndex === 0) {
+        question.isFirst = true
+      }
+      if (qIndex + 1 === questionAmount) {
+        question.isLast = true
+      }
+      question.questions.qtype = question.qtype || 1
+      question.questions.index = question.index || ''
+      if (question.questions.template === 'multi' || question.questions.template === 'cloze' || question.questions.template === 'listen') {
+        let children = question.children
+        children.forEach(function (child, cIndex) {
+          Object.assign(child, child.questions)
+        })
+        question.questions.children = children
+      }
+      question.questions.pad = question.pad || {}
+      question.questions = Question.getParsedData(question.questions)
+    })
+    return this.questionList
+  }
+  getQuestionList() {
+    const that = this
+    wepy.request({
+      url: API.HOST_URI + API.getAnswerInfo,
+      data: Object.assign({
+        paperId: this.paperId,
+        uid: this.user.id,
+        qtype: 1
+      }, wepy.getStorageSync('xcx_yixueyilian_privacy')),
+      success(res) {
+        API.validateLogIn(res.data.status.code, function () {
+          that.questionList = res.data.data[0].answerInfo
+          that.parsedQuestionList = that.getParsedQuestionList()
+          that.question = that.parsedQuestionList[0]
+          const pad = that.getCurrentQuestions().pad
+          that.parsedJsonAnswer = that.getParsedJsonAnswer(pad.jsonAnswer)
+          that.jsonAudioComment = pad.jsonAudioComment || []
+          that.$apply()
+          that.$invoke('marking', 'autoCheckUnfinishQuestion')
+        }, function (code) {
+          that.$invoke('toast', 'show', {
+            title: res.data.status.desc
+          })
+        })
+      },
+      fail(res) {
+        const str = res && res.errMsg
+        if (str.indexOf('timeout') !== -1) {
+          wx.showToast({
+            title: '请求超时',
+            duration: 3000
+          })
+        }
+      }
+    })
+  }
+  getCurrentQuestions(question = this.question) {
+    const questions = question.questions
+    if (questions.template === 'multi' || questions.template === 'cloze' || questions.template === 'listen') {
+      return Object.assign(questions.children[0], {
+        parentPadid: questions.pad.id
+      })
+    } else {
+      return Object.assign(question, questions)
+    }
+  }
+  mergePad(settings = {}) {
+    const questions = this.question.questions
+    if (questions.template === 'multi' || questions.template === 'cloze' || questions.template === 'listen') {
+      const child = questions.children[0]
+      this.question.questions.children[0] = Object.assign(child, {
+        pad: Object.assign(child.pad, settings)
+      })
+    } else {
+      this.question.questions.pad = Object.assign(questions.pad, settings)
+    }
+  }
+  getQuestionById(id = this.unCheckedQuestionId) {
+    const that = this
+    return this.parsedQuestionList.find(function (question, index) {
+      return that.getCurrentQuestions(question).id * 1 === id
+    }) || this.parsedQuestionList[0]
+  }
+  getUserById(id = this.unCheckedUserId) {
+    return this.userList.find((user) => user.id === id) || this.userList[0]
+  }
+  getParsedJsonAnswer(jsonAnswer = []) {
+    let parsedJsonAnswer = []
+    jsonAnswer.forEach(function (imageSrc) {
+      parsedJsonAnswer.push({
+        imageSrc: imageSrc
+      })
+    })
+    return parsedJsonAnswer
+  }
+}
+</script>

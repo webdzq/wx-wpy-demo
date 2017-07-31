@@ -1,0 +1,45 @@
+@import "./stem/stem.wxss";
+@import "./point/point.wxss";
+@import "./choice/choice.wxss";
+@import "./answer/answer.wxss";
+@import "./multi/multi.wxss";
+@import "./classify/classify.wxss";
+@import "./connect/connect.wxss";
+.question {
+  color: #000;
+  font-size: 28rpx;
+  padding: 30rpx 0 30rpx 0;
+  background-color: #fff;
+}
+
+.question .stem image,
+.question .content image,
+.question .analysis image,
+.question .answers image,
+.question .content_rows image {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.question .difficulty .full {
+  background-color: red;
+  width: 22rpx;
+  height: 22rpx;
+  display: inline-block;
+  margin-right: 6rpx;
+}
+
+.point-text,
+.analysis-text,
+.answer-text {
+  font-size: 28rpx;
+  color: #888888;
+}
+
+.difficulty,
+.answers,
+.analysis,
+.point {
+  border-top: 1px solid #e5e5e5;
+  padding: 30rpx;
+}

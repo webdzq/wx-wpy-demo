@@ -1,0 +1,178 @@
+<style lang="less">
+  .page {
+    .weui-cells {
+      margin-top: 30rpx;
+      &:after {
+        border-bottom: 1rpx solid #E5E5E5;
+        color: #E5E5E5;
+      }
+      &:before {
+        border-top: 1rpx solid #E5E5E5;
+        color: #E5E5E5;
+      }
+      .real_name,
+      .school_name {
+        margin-right: 27rpx;
+      }
+    }
+    .weui-btn {
+      margin: 30rpx 0rpx 0;
+      background: #fff;
+      color: #000;
+      border-radius: 0px !important;
+    }
+  }
+  page {
+    background-color: #efeff4;
+  }
+  .my_name,.my_school{
+    margin-right: 30rpx;
+  }
+  .weui-cell__ft_in-access {
+    padding-right: 30rpx;
+  }
+</style>
+
+
+<template>
+  <view class="page">
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">姓名</view>
+        <view class="weui-cell__ft my_name">{{realName}}</view>
+      </view>
+    </view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">学校</view>
+        <view class="weui-cell__ft my_school">{{schoolName}}</view>
+      </view>
+    </view>
+    <view class="weui-cells weui-cells_after-title">
+      <navigator url="../resetSubject/resetSubject" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">学科</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{stageName}}{{subjectName}}</view>
+      </navigator>
+    </view>
+    <button class="weui-btn" type="warn" @tap="logout">退出登录</button>
+    <toast />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Toast from 'wepy-com-toast'
+  import API from '../../util/api.js'
+  export default class UserInfo extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的'
+    }
+    components = {
+      toast: Toast
+    }
+    mixins = []
+    data = {
+      realName: '',
+      schoolName: '',
+      stageName: '',
+      subjectName: ''
+    }
+    computed = {
+      now() {
+        return +new Date()
+      }
+    }
+    methods = {
+      logout(e) {
+        let self = this
+        wepy.request({
+          url: API.HOST_URI + API.logout,
+          data: wepy.getStorageSync('xcx_yixueyilian_privacy'),
+          success(res) {
+            if (res.data.status.code === 0) {
+              wepy.removeStorage({
+                key: 'xcx_yixueyilian_privacy',
+                success() {
+                  wepy.redirectTo({
+                    url: '../login/login'
+                  })
+                }
+              })
+            } else {
+              self.$invoke('toast', 'show', {
+                title: res.data.status.desc
+              }).then((res) => {
+                // console.log(res)
+                wepy.redirectTo({
+                  url: '../login/login'
+                })
+              })
+            }
+            self.$apply()
+          },
+          fail(res) {
+            const str = res && res.errMsg
+            if (str.indexOf('timeout') !== -1) {
+              wx.showToast({
+                title: '请求超时',
+                duration: 3000
+              })
+            }
+          }
+        })
+      }
+    }
+    events = {}
+    onLoad() {
+      this.getUserInfo()
+    }
+    getUserInfo() {
+      let that = this
+      wepy.request({
+        url: API.HOST_URI + API.getUserInfo,
+        data: wepy.getStorageSync('xcx_yixueyilian_privacy'),
+        success(res) {
+          API.validateLogIn(res.data.status.code, function() {
+            that.realName = res.data.data[0].realname
+            that.schoolName = res.data.data[0].schoolname
+            that.stageName = res.data.property.favSubject.stageName
+            that.subjectName = res.data.property.favSubject.subjectName
+          }, function(code) {
+            that.$invoke('toast', 'show', {
+              title: res.data.status.desc
+            })
+          })
+          // if (res.data.status.code === 0) {
+          //   that.realName = res.data.data[0].realname
+          //   that.schoolName = res.data.data[0].schoolname
+          //   that.stageName = res.data.property.favSubject.stageName
+          //   that.subjectName = res.data.property.favSubject.subjectName
+          // } else {
+          //   that.$invoke('toast', 'show', {
+          //     title: res.data.status.desc
+          //   }).then((res) => {
+          //     // if (res.data.status.code === 99) {
+          //     wepy.switchTab({
+          //       url: '../login/login'
+          //     })
+          //     // }
+          //   })
+          // }
+          that.$apply()
+        },
+        fail(res) {
+          const str = res && res.errMsg
+          if (str.indexOf('timeout') !== -1) {
+            wx.showToast({
+              title: '请求超时',
+              duration: 3000
+            })
+          }
+        }
+      })
+    }
+    onShow() {
+      this.getUserInfo()
+    }
+  }
+</script>

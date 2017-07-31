@@ -1,0 +1,246 @@
+<style lang="less">
+.workView_container {
+  background-color: #efeff4;
+  .summary {
+    background-color: #efeff4;
+    padding: 30rpx 0 0 30rpx;
+    .total {
+      font-size: 28rpx;
+      color: #888;
+    }
+    .item_list {
+      margin-top: 20rpx;
+      .item {
+        color: #BFBFBF;
+        font-size: 24rpx;
+        display: inline-block;
+        &:not(:last-child) {
+          margin-right: 24rpx;
+        }
+      }
+    }
+  }
+  .sort_list {
+    background-color: #fff;
+    .sort_container {
+      .sort_title {
+        font-size: 34rpx;
+        color: #888;
+        line-height: 86rpx;
+        padding: 0 30rpx;
+        border-top: 1rpx solid #e5e5e5;
+      }
+      .question_list>.question {
+        border-top: 1rpx solid #e5e5e5;
+      }
+    }
+  }
+}
+</style>
+
+<template>
+  <import src="../../components/question/question.wxml" />
+  <view class="workView_container">
+    <view class="summary">
+      <view class="total">共计{{total}}题</view>
+      <view class="item_list">
+        <view class="item" wx:for="{{parsedSortedPt}}" wx:key="">{{item.name}}{{item.num}}</view>
+      </view>
+    </view>
+    <view class="sort_list">
+      <block wx:for-items="{{parsedSortedPt}}" wx:for-item="sort" wx:key="">
+        <view class="sort_container">
+          <view class="sort_title">{{sort.name}} ({{sort.num}})</view>
+          <view class="question_list">
+            <block wx:for-items="{{sort.children}}" wx:for-item="question" wx:key="">
+              <template is="question" data="{{question: question.questions, display: 'simple'}}">
+              </template>
+            </block>
+          </view>
+        </view>
+      </block>
+    </view>
+    <toast />
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Toast from 'wepy-com-toast'
+import API from '../../util/api.js'
+import QuestionAPI from '../../util/question_api.js'
+import Question from '../../components/question/question.js'
+export default class WorkView extends wepy.page {
+  config = {
+    navigationBarTitleText: '作业预览'
+  }
+  components = {
+    toast: Toast
+  }
+  mixins = []
+  data = {
+    question: {},
+    objNum: 0,
+    subNum: 0,
+    sortedPt: [],
+    parsedSortedPt: [{
+      children: []
+    }]
+  }
+  computed = {
+    total() {
+      let total = 0
+      this.parsedSortedPt.forEach(function (sort) {
+        total += sort.children.length
+      })
+      return total
+    }
+  }
+  onPullDownRefresh(e) {
+    // console.log('onPullDownRefresh...', e)
+    wx.stopPullDownRefresh()
+  }
+  methods = {
+    wxParseImgLoad(e) {
+      // const that = this
+      const recal = Question.wxAutoImageCal(e.detail.width, e.detail.height, this, 'image', 120)
+      // const idx = e.target.dataset.idx
+      this.parsedSortedPt.forEach(function (sort, sIndex) {
+        let questionList = sort.children
+        questionList.forEach(function (question, qIndex) {
+          Question.resizeContentImage(e.target.dataset.from, question.questions, e.target.dataset.src, recal.imageWidth, recal.imageheight)
+        })
+      })
+    },
+    onTapAudioBar(e) {
+      const questionId = e.currentTarget.dataset.questionid
+      const playingStatus = this.getPlayingStatusByQuestionid(questionId)
+      if (playingStatus) {
+        wx.createAudioContext('real_audio_player_' + questionId).pause()
+        this.setPlayingStatusByQuestionid(questionId, !playingStatus)
+      } else {
+        wx.createAudioContext('real_audio_player_' + questionId).play()
+        this.setPlayingStatusByQuestionid(questionId, !playingStatus)
+      }
+    },
+    audioPlayOver(e) {
+      const questionId = e.currentTarget.dataset.questionid
+      this.setPlayingStatusByQuestionid(questionId, false)
+    }
+  }
+  events = {}
+  onLoad(options) {
+    let that = this
+    this.paperId = options.paperId
+    this.classId = options.classId
+    wepy.request({
+      url: API.HOST_URI + API.getPaper,
+      data: Object.assign({
+        paperId: this.paperId,
+        classId: this.classId
+      }, wepy.getStorageSync('xcx_yixueyilian_privacy')),
+      success(res) {
+        API.validateLogIn(res.data.status.code, function () {
+          const data = res.data.data[0]
+          that.objNum = data.quesnum
+          that.subNum = data.subquesnum
+          that.sortedPt = data.sortedPt
+          that.parsedSortedPt = that.getParsedSortedPt()
+        }, function (code) {
+          that.$invoke('toast', 'show', {
+            title: res.data.status.desc
+          }).then((res) => {
+            if (res.data.status.code === 99) {
+              wepy.switchTab({
+                url: '../login/login'
+              })
+            }
+          })
+        })
+        // if (res.data.status.code === 0) {
+        //   const data = res.data.data[0]
+        //   that.objNum = data.quesnum
+        //   that.subNum = data.subquesnum
+        //   that.sortedPt = data.sortedPt
+        //   that.parsedSortedPt = that.getParsedSortedPt()
+        // } else {
+        //   that.$invoke('toast', 'show', {
+        //     title: res.data.status.desc
+        //   }).then((res) => {
+        //     if (res.data.status.code === 99) {
+        //       wepy.switchTab({
+        //         url: '../login/login'
+        //       })
+        //     }
+        //   })
+        // }
+        that.$apply()
+      },
+      fail(res) {
+        const str = res && res.errMsg
+        if (str.indexOf('timeout') !== -1) {
+          wx.showToast({
+            title: '请求超时',
+            duration: 3000
+          })
+        }
+      }
+    })
+  }
+  getParsedSortedPt() {
+    let sortList = this.sortedPt
+    let globalQIndex = 1
+    sortList.forEach(function (sort, sIndex) {
+      sort.name = QuestionAPI.getTypenameByTypeid(sort.type_id)
+      let questionList = sort.children
+      questionList.forEach(function (question, qIndex) {
+        let questions = question.questions
+        questions.qtype = question.qtype || 1
+        if (questions.template === 'multi' || questions.template === 'cloze' || (questions.template === 'listen' && questions.children.length > 1)) {
+          if (questions.type_id === '8' || questions.type_id === '22') {
+            questions.index = globalQIndex
+            globalQIndex++
+          } else {
+            questions.index = ''
+            questions.children[0].index = globalQIndex
+            globalQIndex += questions.children.length
+          }
+        } else {
+          questions.index = globalQIndex
+          globalQIndex++
+        }
+        question.questions = Question.getParsedData(questions)
+      })
+    })
+    return sortList
+  }
+  getPlayingStatusByQuestionid(id) {
+    let playingStatus = false
+    this.parsedSortedPt.forEach(function (sort) {
+      if (sort.name.indexOf('听力') >= 0 || sort.name.indexOf('听音') >= 0) {
+        sort.children.forEach(function (child) {
+          if (child.questions.id + '' === id) {
+            playingStatus = child.questions.isPlaying
+            return false
+          }
+        })
+      }
+    })
+    return playingStatus
+  }
+  setPlayingStatusByQuestionid(id, status) {
+    const that = this
+    this.parsedSortedPt.forEach(function (sort) {
+      if (sort.name.indexOf('听力') >= 0 || sort.name.indexOf('听音') >= 0) {
+        sort.children.forEach(function (child) {
+          if (child.questions.id + '' === id) {
+            child.questions.isPlaying = status
+            that.$apply()
+            return false
+          }
+        })
+      }
+    })
+  }
+}
+</script>

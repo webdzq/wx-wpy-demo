@@ -1,0 +1,121 @@
+<style lang="less">
+  page {
+    background: #efeff4;
+  }
+  .questionDetail_container {
+    .title {
+      background-color: #efeff4;
+      padding: 30rpx 0 16rpx 30rpx;
+      border-bottom: 1rpx solid #e5e5e5;
+      color: #888;
+      font-size: 28rpx;
+    }
+  }
+</style>
+
+<template>
+  <import src="../../components/question/question.wxml" />
+  <view class="questionDetail_container">
+    <view class="title">{{typeName}}</view>
+    <template is="question" data="{{question: parsedQuestion, display: 'full'}}">
+</template>
+    <toast />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Toast from 'wepy-com-toast'
+  import API from '../../util/api.js'
+  import QuestionAPI from '../../util/question_api.js'
+  import Question from '../../components/question/question.js'
+  import Connect from '../../components/question/connect/connect.js'
+  export default class WorkView extends wepy.page {
+    config = {
+      navigationBarTitleText: '题目详情'
+    }
+    components = {
+      toast: Toast
+    }
+    mixins = []
+    data = {
+      typeName: '',
+      parsedQuestion: {}
+    }
+    computed = {}
+    methods = {
+      wxParseImgLoad(e) {
+        // const that = this
+        const recal = Question.wxAutoImageCal(e.detail.width, e.detail.height, this, 'image', 120)
+        // const idx = e.target.dataset.idx
+        Question.resizeContentImage(e.target.dataset.from, this.question, e.target.dataset.src, recal.imageWidth, recal.imageheight)
+      },
+      onTapAudioBar(e) {
+        const playingStatus = this.question.isPlaying
+        if (playingStatus) {
+          wx.createAudioContext('real_audio_player_' + this.question.id).pause()
+          this.question.isPlaying = !playingStatus
+        } else {
+          wx.createAudioContext('real_audio_player_' + this.question.id).play()
+          this.question.isPlaying = !playingStatus
+        }
+      },
+      audioPlayOver(e) {
+        this.question.isPlaying = false
+      }
+    }
+    events = {}
+    onLoad(options) {
+      let that = this
+      this.questionId = options.questionId
+      this.index = options.index || ''
+      this.firstChildIndex = options.firstChildIndex
+      const param = {
+        url: API.HOST_URI + API.getQuestion,
+        data: Object.assign({
+          qid: this.questionId
+        }, wepy.getStorageSync('xcx_yixueyilian_privacy')),
+        success(res) {
+          API.validateLogIn(res.data.status.code, function() {
+            that.question = res.data.data[0][0]
+            that.question.index = that.index
+            if (that.firstChildIndex) {
+              that.question.children[0].index = that.firstChildIndex * 1
+            }
+            that.typeName = QuestionAPI.getTypenameByTypeid(that.question.type_id)
+            that.parsedQuestion = Question.getParsedData(that.question)
+            if (that.question.type_id === '7') {
+              Connect.drawLines(that.parsedQuestion.id, that.parsedQuestion.answer, that.parsedQuestion.content.choices.length / 2)
+            } else if (that.question.type_id === '11') {
+              that.question.children.forEach(function(child) {
+                Connect.drawLines(child.id, child.answer, child.content.choices.length / 2)
+              })
+            }
+          }, function(code) {
+            that.$invoke('toast', 'show', {
+              title: res.data.status.desc
+            }).then((res) => {
+              if (res.data.status.code === 99) {
+                wepy.switchTab({
+                  url: '../login/login'
+                })
+              }
+            })
+          })
+          that.$apply()
+        },
+        fail(res) {
+          const str = res && res.errMsg
+          if (str.indexOf('timeout') !== -1) {
+            wx.showToast({
+              title: '请求超时',
+              duration: 3000
+            })
+          }
+        }
+      }
+      // wepy.request()
+      API.testRquestproxy(param)
+    }
+  }
+</script>

@@ -1,0 +1,479 @@
+<style lang="less">
+  page {
+    background-color: #efeff4;
+  }
+  .workSetion-container {
+    background-color: #fff;
+    padding: 0 30rpx;
+  }
+  .grade-name {
+    color: #888;
+    font-size: 28rpx;
+    padding: 38rpx 30rpx 22rpx 30rpx;
+  }
+  .weui-cell-plus,
+  .weui-cell_accessplus {
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .weui-cells_after-title .weui-cell {
+    height: 86rpx;
+    line-height: 86rpx;
+    padding: 0;
+  }
+  .workSetion-main {
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .weui-cells__title {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .workSetion_icon {
+    width: 54rpx;
+    height: 54rpx;
+    display: inline-block;
+  }
+  .weui-cell__ft-plus {
+    padding-right: 30px;
+  }
+  .weui-cell__ft_in-access::after {
+    right: 13px;
+  }
+  .confirm-block {
+    height: 100rpx;
+    line-height: 100rpx;
+    padding: 0;
+  }
+  .weui-cell-delect {
+    width: 54rpx;
+    height: 54rpx;
+    display: inline-block;
+  }
+  .weui-cell-setup {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .weui-cell-delect-plus {
+    width: 54rpx;
+    height: 54rpx;
+    display: inline-block;
+  }
+  .weui-cell-delect {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .confirm-action-mask {
+    width: 100%;
+    height: 445px;
+    background: #000;
+    opacity: .5;
+    position: fixed;
+    z-index: 999;
+    display: none;
+  }
+  .weui-cells::after {
+    border-bottom: 0rpx;
+  }
+  .weui-cells::before,
+  .weui-cell::before {
+    border-top: 0rpx;
+  }
+  .weui-cell-arrangementplus {
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .cancel_borderbtm {
+    border-bottom: 0px solid #e5e5e5;
+  }
+</style>
+
+<template>
+  <view class="confirm-action-mask" wx-if="del_opacity">
+  </view>
+  <view class="grade">
+    <view class="grade-name">作业设置</view>
+  </view>
+  <view class="workSetion-main">
+    <view class="workSetion-container">
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell-plus">
+          <view class="weui-cell__bd">作业名称</view>
+          <view class="weui-cell__ft weui-cell__ft-plus">{{name}}</view>
+        </view>
+        <view class="weui-cells weui-cells_after-title">
+          <view class="weui-cell weui-cell_access weui-cell_accessplus" hover-class="weui-cell_active">
+            <view class="weui-cell__bd">开始时间</view>
+            <view wx:if="{{isPublished}}" class="weui-cell__ft  weui-cell__ft-plus">{{getPublish_time}}</view>
+            <view wx:else class="weui-cell__ft weui-cell__ft_in-access" data-id="1" bindtap="selectPicker">{{getPublish_time}}</view>
+            <!-- <view class="workSetion_icon">
+                                                    <image class="weui-cell-setup" data-item="{{}}" catchtap="worksetion" src="{{imagesrc}}" mode="scaleToFill"></image>
+                                                  </view>  -->
+          </view>
+          <view class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+            <view class="weui-cell__bd">截止时间</view>
+            <view wx:if="{{isEndTimed}}" class="weui-cell__ft weui-cell__ft-plus">{{getEnd_time}}</view>
+            <view wx:else class="weui-cell__ft weui-cell__ft-plus weui-cell__ft_in-access" data-id="2" bindtap="selectPicker">{{getEnd_time}}</view>
+            <!-- <view class="workSetion_icon">
+                                                    <image class="weui-cell-setup" data-item="{{}}" catchtap="worksetion" src="{{imagesrc}}" mode="scaleToFill"></image>
+                                                  </view> -->
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="weui-cells__title grade-name">布置给</view>
+  <view class="workSetion-main">
+    <view class="workSetion-container workSetion-container-plus">
+      <block wx:for-items="{{gradeList}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
+        <view class="weui-cells weui-cells_after-title">
+          <view class="weui-cell  {{gradeList.length-1===index?'cancel_borderbtm':' weui-cell-arrangementplus'}}">
+            <view class="weui-cell__bd">{{item.className}} {{item.groupName}}</view>
+            <view class="weui-cell__ft weui-cell-delect-plus" data-index="{{index}}" data-groupid="{{item.groupId}}" data-paperid="{{item.paperId}}" bindtap="delGrade">
+              <image class="weui-cell-delect" src="/images/del.png" mode="scaleToFill"></image>
+            </view>
+          </view>
+        </view>
+      </block>
+      <DatePicker :hidden.sync="hidden" :curPickTime.sync="curPickTime" @initDateemit="nitDateemitHandle"></DatePicker>
+      <!--<CofirmAction :cofirmhidden.sync="cofirmhidden" :actionTitle.sync="actionTitle" />-->
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import DatePicker from '../../components/datePicker/datePicker'
+  import {
+    formatDate,
+    resolveDate
+  } from '../../util/util'
+  // import {
+  //   host
+  // } from '../../config'
+  import API from '../../util/api.js'
+  // import CofirmAction from '../../components/confirmAction/confirmAction'
+  export default class WorkSetion extends wepy.page {
+    config = {
+      navigationBarTitleText: '作业设置'
+    }
+    components = {
+      DatePicker: DatePicker
+    }
+    mixins = []
+    data = {
+      cofirmhidden: false,
+      actionTitle: '删除后不可恢复，确定要删除吗？',
+      name: '',
+      curPickId: '1',
+      curPickTime: '',
+      build_time: '',
+      publish_time: '',
+      isPublished: false,
+      isEndTimed: false,
+      end_time: '',
+      hidden: true,
+      gradeList: [],
+      imagesrc: '/images/set_up.png',
+      del_opacity: false
+    }
+    computed = {
+      getPublish_time() {
+        // console.log('getPublish_time...', this.curPickId)
+        if (!this.isPublished) {
+          return this.publish_time
+        }
+        return this.publish_time
+      },
+      getEnd_time() {
+        // console.log('getEnd_time...', this.curPickId)
+        if (this.isEndTimed) {
+          return this.end_time
+        }
+        // console.log('getEnd_time...endtime=', this.curPickTime, this.end_time)
+        return this.end_time
+      }
+    }
+    onPullDownRefresh(e) {
+      // console.log('onPullDownRefresh...', e)
+      wx.stopPullDownRefresh()
+    }
+    onShow() {
+      // console.log('worksetion..onShow...=')
+    }
+    getmmTime(vFormattime) {
+      const time = vFormattime || '2017.06.01 12:12'
+      return new Date(time).getTime()
+    }
+    submitTime(tmptime, callback) {
+      let data = {
+        token: this.token,
+        tid: this.tid,
+        pid: this.id,
+        beginTime: this.curPickId === '2' ? this.getmmTime(this.publish_time) : tmptime,
+        endTime: this.curPickId === '1' ? this.getmmTime(this.end_time) : tmptime
+      }
+      if (this.isPublished) {
+        data.beginTime = this.build_time
+      }
+      console.log('submitTime...', data.beginTime, this.build_time)
+      const param = {
+        url: API.HOST_URI + API.updateHwkTime,
+        data: data,
+        method: 'GET', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
+        // header: {}, // 设置请求的 header
+        success: function(res) {
+          // success
+          // console.log('success...', res.data.status)
+          API.validateLogIn(res.data.status.code, function() {
+            callback()
+            wx.showToast({
+              title: '成功',
+              icon: 'success',
+              duration: 2000
+            })
+          }, function(code) {
+            wx.showToast({
+              title: res.data.status.desc,
+              icon: 'fail',
+              duration: 2000
+            })
+          })
+          // if (res.data.status.code === 0) {
+          //   callback()
+          //   wx.showToast({
+          //     title: '成功',
+          //     icon: 'success',
+          //     duration: 2000
+          //   })
+          // } else {
+          //   wx.showToast({
+          //     title: res.data.status.desc,
+          //     icon: 'fail',
+          //     duration: 2000
+          //   })
+          // }
+        },
+        fail: function(res) {
+          // fail
+          const str = res && res.errMsg
+          if (str.indexOf('timeout') !== -1) {
+            wx.showToast({
+              title: '请求超时',
+              duration: 3000
+            })
+          } else {
+            wx.showToast({
+              title: '修改时间失败',
+              icon: 'fail',
+              duration: 2000
+            })
+          }
+        },
+        complete: function() {
+          // complete
+        }
+      }
+      // wx.request(param)
+      API.testRquestproxy(param)
+    }
+    methods = {
+      initDateemitHandle() {
+        // console.log('initDateemitHandle...')
+      },
+      selectPicker(e) {
+        this.hidden = false
+        this.curPickId = e.target.dataset.id
+        // console.log('111111', this.hidden, this.curPickId)
+        if (this.curPickId === '1') {
+          this.curPickTime = this.publish_time
+        } else if (this.curPickId === '2') {
+          this.curPickTime = this.end_time
+        }
+        this.$broadcast('broadcast-initDatePicker', {
+          curPickTime: this.curPickTime
+        })
+      },
+      delGrade(e) {
+        // 删除作业
+        const that = this
+        const paperId = e.currentTarget.dataset.paperid
+        const index = e.currentTarget.dataset.index
+        const groupid = e.currentTarget.dataset.groupid
+        // console.log('delGrade...', index, paperId)
+        let data = {
+          token: this.token,
+          tid: this.tid,
+          gid: groupid,
+          pid: paperId
+        }
+        const param = {
+          url: API.HOST_URI + API.deleteHwk,
+          data: data,
+          method: 'GET', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
+          // header: {}, // 设置请求的 header
+          success: function(res) {
+            // success
+            // console.log('success...')
+            API.validateLogIn(res.data.status.code, function() {
+              wx.showToast({
+                title: '成功',
+                icon: 'success',
+                duration: 2000
+              })
+              if (that.gradeList.length === 1) {
+                // 最后一个
+                wx.switchTab({
+                  url: '../checkWork/checkWork'
+                })
+              } else {
+                that.gradeList.splice(index, 1)
+                that.$apply()
+              }
+            }, function(code) {
+              // that.gradeList.splice(index, 1)
+              // that.$apply()
+            })
+            // wx.showToast({
+            //   title: '成功',
+            //   icon: 'success',
+            //   duration: 2000
+            // })
+            // if (that.gradeList.length === 1) {
+            //   // 最后一个
+            //   wx.switchTab({
+            //     url: '../checkWork/checkWork'
+            //   })
+            // } else {
+            //   that.gradeList.splice(index, 1)
+            //   that.$apply()
+            // }
+          },
+          fail: function(res) {
+            // fail
+            const str = res && res.errMsg
+            if (str.indexOf('timeout') !== -1) {
+              wx.showToast({
+                title: '请求超时',
+                duration: 3000
+              })
+            }
+          },
+          complete: function() {
+            // complete
+          }
+        }
+        this.cofirmhidden = true
+        wx.showModal({
+          title: '删除提示',
+          content: this.actionTitle,
+          confirmText: '确定',
+          cancelText: '取消',
+          success: function(res) {
+            console.log(res)
+            if (res.confirm) {
+              console.log('用户点击主操作')
+              that.cofirmhidden = false
+              // wx.request(param)
+              API.testRquestproxy(param)
+            } else {
+              console.log('用户点击辅助操作')
+              that.cofirmhidden = false
+            }
+          }
+        })
+        // CofirmAction.initAction({
+        //   confirm() {
+        //     // console.log('confirm...')
+        //     that.cofirmhidden = false
+        //     wx.request(param)
+        //   },
+        //   cancel() {
+        //     console.log('cancel...')
+        //     that.cofirmhidden = false
+        //   }
+        // })
+      }
+    }
+    events = {
+      'emit-action-cofirm': (...args) => {
+        // console.log('emit-action-cofirm', args)
+        this.cofirmhidden = false
+      },
+      'emit-action-cancel': (...args) => {
+        // console.log('emit-action-cancel', args)
+      },
+      'initDateemit': (...args) => {
+        // console.log('initDateemit...', args)
+        this.cofirmhidden = false
+      },
+      'emit-sumbitTime': (...args) => {
+        // console.log('emit-sumbitTime...', args)
+        const that = this
+        this.curPickTime = args[0]
+        if (this.curPickId === '1') {
+          const tmptime = resolveDate(this.curPickTime).standardtime
+          const now = new Date().getTime()
+          const tmpEndTime = resolveDate(this.end_time).standardtime
+          if (!(tmptime > now && tmptime < tmpEndTime)) {
+            if (tmptime < now) {
+              wx.showToast({
+                title: '发布时间不能早于当前时间',
+                duration: 2000
+              })
+            } else {
+              wx.showToast({
+                title: '发布时间不能晚于截止时间',
+                duration: 2000
+              })
+            }
+          } else {
+            // 提交时间接口
+            this.submitTime(tmptime, function() {
+              that.publish_time = that.curPickTime
+              that.$apply()
+            })
+          }
+        } else if (this.curPickId === '2') {
+          const tmptime = resolveDate(this.curPickTime).standardtime
+          const tmpPublishTime = resolveDate(this.publish_time).standardtime
+          const now = new Date().getTime()
+          // console.log('tmptime=%s,now=%s,tmpPublishTime=%s', tmptime, now, tmpPublishTime)
+          if (!(tmptime > now && tmptime > tmpPublishTime)) {
+            wx.showToast({
+              title: '截止时间不能早于当前时间/发布时间',
+              duration: 2000
+            })
+          } else {
+            // 提交时间接口
+            this.submitTime(tmptime, function() {
+              that.end_time = that.curPickTime
+              that.$apply()
+            })
+          }
+        }
+      }
+    }
+    onLoad(opts) {
+      // console.log('worksetion..onLoad...=', JSON.parse(opts.dataItem))
+      const now = new Date().getTime()
+      var pageData = JSON.parse(opts.dataItem)
+      this.curPickTime = formatDate(pageData.begintime) // 发布时间
+      this.publish_time = formatDate(pageData.begintime)
+      this.build_time = pageData.begintime
+      this.end_time = formatDate(pageData.endtime)
+      this.name = pageData.name
+      this.token = pageData.token
+      this.tid = pageData.tid
+      this.id = pageData.id
+      this.gradeList = pageData.paperDetailStatisticses
+      this.isPublished = pageData.begintime < now
+      this.isEndTimed = pageData.endtime < now
+      // console.log('worksetion..onLoad...=', pageData, pageData.endtime, now)
+    }
+    onUnload() {
+      // console.log('onUnload...')
+      this.hidden = true
+    }
+  }
+</script>

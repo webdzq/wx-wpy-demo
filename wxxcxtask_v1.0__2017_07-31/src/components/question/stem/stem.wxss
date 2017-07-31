@@ -1,0 +1,24 @@
+.stem_box {
+  font-size: 34rpx;
+  padding: 0 30rpx;
+}
+
+.stem_box .number {
+  display: inline-block;
+  color: #0052cc;
+  margin-right: 8rpx;
+  vertical-align: top;
+}
+
+.stem_box .stem {
+  display: inline-block;
+  width: 610rpx;
+}
+
+.stem_box .stem .fill_blank {
+  border-bottom: 1px solid #000;
+  width: 60rpx;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+}

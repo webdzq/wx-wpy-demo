@@ -1,0 +1,111 @@
+<style lang="less">
+  .grade {
+    // background-color: red
+    // margin: 38rpx 30rpx 0 30rpx;
+  }
+  .grade-list {
+    background-color: #ccc;
+    display: inline-block;
+    border: 1px solid red;
+  }
+  .grade-btn {
+    color: #0052cc !important;
+    border: 1px solid #0052cc !important;
+    margin: 0px 30rpx 0px 0rpx;
+    line-height: 58rpx;
+    text-align: center;
+    width: 210rpx;
+    padding: 0rpx;
+  }
+  .btn-cur {
+    color: red !important;
+  }
+  .grade-name {
+    color: #888;
+    margin: 38rpx 0rpx 22rpx 30rpx;
+    font-size: 28rpx;
+  }
+  .btn-block {
+    // margin: 18rpx 0rpx;
+    background: #fff;
+    padding: 18rpx 30rpx;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  button[type="primary"][plain] {
+    color: #0052cc;
+  }
+  .weui-cells::after{
+    border-bottom:0px;
+  } 
+</style>
+
+<template>
+  <view class="grade">
+    <view class="grade-name">班级</view>
+    <view bindtap="tapGradeSelect">
+      <view class="weui-flex btn-block">
+        <block wx:for-items="{{classList}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
+          <button wx-if="{{index<3}}" data-index="{{index}}" data-id="{{item.id}}" class="weui-btn grade-btn {{item.focus?'btn-cur':''}}" type="primary" plain="true">{{item.name}}</button>
+        </block>
+      </view>
+      <view class="weui-flex btn-block" wx-if="{{3<classList.length}}">
+        <block wx:for-items="{{classList}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
+          <button wx-if="{{2<index&&index<6}}" data-index="{{index}}" data-id="{{item.id}}" class="weui-btn grade-btn {{item.focus?'btn-cur':''}}" type="primary" plain="true">{{item.name}}</button>
+        </block>
+      </view>
+      <view class="weui-flex btn-block" wx-if="{{6<classList.length}}">
+        <block wx:for-items="{{classList}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
+          <button wx-if="{{5<index&&index<9}}" data-index="{{index}}" data-id="{{item.id}}" class="weui-btn grade-btn {{item.focus?'btn-cur':''}}" type="primary" plain="true">{{item.name}}</button>
+        </block>
+      </view>
+      <view class="weui-flex btn-block" wx-if="{{9<classList.length}}">
+        <block wx:for-items="{{classList}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
+          <button wx-if="{{8<index&&index<12}}" data-index="{{index}}" data-id="{{item.id}}" class="weui-btn grade-btn {{item.focus?'btn-cur':''}}" type="primary" plain="true">{{item.name}}</button>
+        </block>
+      </view>
+      <view class="weui-flex btn-block" wx-if="{{12<classList.length}}">
+        <block wx:for-items="{{classList}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
+          <button wx-if="{{11<index&&index<15}}" data-index="{{index}}" data-id="{{item.id}}" class="weui-btn grade-btn {{item.focus?'btn-cur':''}}" type="primary" plain="true">{{item.name}}</button>
+        </block>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class GradeList extends wepy.component {
+    props = {
+      classList: {
+        type: Object,
+        twoWay: true,
+        default: []
+      }
+    }
+    data = {}
+    methods = {
+      tapGradeSelect(event) {
+        let target = event.target
+        let id = target.dataset.id || 0
+        let index = target.dataset.index || 0
+        // console.log('id=', id, target.dataset.index)
+        if (id === 0) {
+          return
+        }
+        this.classList[index].focus = !this.classList[index].focus
+        this.classList.forEach(function(item, cindex) {
+          if (cindex !== index) {
+            item.focus = false
+          }
+        })
+        // console.log(target.dataset, this.$name + ' tap')
+        if (!this.classList[index].focus) {
+          id = ''
+        }
+        this.$emit('gradeSelect-worklist', id)
+      }
+    }
+    onLoad() {}
+  }
+</script>

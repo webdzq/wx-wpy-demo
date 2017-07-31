@@ -1,0 +1,34 @@
+<style lang="less">
+  .Assignment {}
+</style>
+
+
+<template>
+  <view class="Assignment">
+    hello Assignment
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Assignment extends wepy.page {
+    config = {
+      navigationBarTitleText: 'Assignment'
+    }
+    components = {
+    }
+    mixins = []
+    data = {}
+    computed = {
+      now() {
+        return +new Date()
+      }
+    }
+    methods = {
+    }
+    events = {
+    }
+    onLoad() {
+    }
+  }
+</script>

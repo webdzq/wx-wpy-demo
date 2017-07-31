@@ -1,0 +1,193 @@
+<style lang="less">
+  .marking {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    color: #7f8389;
+    line-height: 60rpx;
+    background: #f7f7fa;
+    height: 98rpx;
+    width: 100%;
+    border-top: 1rpx solid #ababab;
+    display: -webkit-flex;
+    align-items: center;
+    .title {
+      width: 78rpx;
+      display: inline-block;
+      font-size: 24rpx;
+      line-height: 98rpx;
+      text-align: center;
+      border-left: 1rpx solid #ababab;
+      margin-left: 108rpx;
+    }
+    .buttons {
+      display: inline-flex;
+      height: 98rpx;
+      justify-content: space-around;
+      align-items: center;
+      width: 564rpx;
+      button {
+        border: 0 solid #d6d5d6;
+        text-align: center;
+        width: 80rpx;
+        line-height: 56rpx;
+        height: 56rpx;
+        font-size: 28rpx;
+        outline: none;
+        &.focus {
+          background-color: #eff5ff;
+          border: 1rpx solid #0052cc;
+          color: #0052cc;
+        }
+        &.big {
+          width: 270rpx;
+        }
+      }
+    }
+  }
+  .buttons .voice-place {
+    width: 108rpx;
+    display: inline-block;
+  }
+</style>
+
+<template>
+  <view class="marking">
+    <view class="voice-place"> </view>
+    <view class="title">打分</view>
+    <view class="buttons">
+      <block wx:for-items="{{buttons}}" wx:for-index="index" wx:for-item="button" wx:key="*this">
+        <block wx:if="{{button.value === value}}">
+          <button bindtap="onTap({{button.value}})" class="focus {{button.className}}">{{button.name}}</button>
+        </block>
+        <block wx:else>
+          <button bindtap="onTap({{button.value}})" class="{{button.className}}">{{button.name}}</button>
+        </block>
+      </block>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Marking extends wepy.component {
+    props = {
+      question: {
+        type: Object,
+        dafault: {
+          questions: {
+            pad: {
+              teachercheck: {},
+              jsonAnswer: []
+            }
+          },
+          qtype: 1
+        },
+        require: true
+      }
+    }
+    computed = {
+      value() {
+        const questions = this.question.questions
+        let pad = {}
+        if (questions.template === 'multi' || questions.template === 'cloze' || questions.template === 'listen') {
+          pad = questions.children[0].pad
+        } else {
+          pad = questions.pad
+        }
+        if (pad && pad.status === 5) {
+          return pad.teachercheck.score
+        } else {
+          return ''
+        }
+      },
+      buttons() {
+        const questions = this.question.questions
+        let typeId = 3
+        let jsonAnswer = []
+        if (questions.template === 'multi' || questions.template === 'cloze' || questions.template === 'listen') {
+          typeId = questions.children[0].type_id
+          jsonAnswer = questions.children[0].pad.jsonAnswer || []
+        } else {
+          typeId = questions.type_id
+          jsonAnswer = questions.pad.jsonAnswer || []
+        }
+        if (typeId === '3') {
+          if (!jsonAnswer.length || jsonAnswer.join('') === '') {
+            return [{
+              name: '错误',
+              value: 0,
+              className: 'big'
+            }]
+          } else {
+            return [{
+              name: '正确',
+              value: 5,
+              className: 'big'
+            }, {
+              name: '错误',
+              value: 0,
+              className: 'big'
+            }]
+          }
+        } else {
+          if (!jsonAnswer.length || jsonAnswer.join('') === '') {
+            return [{
+              name: '0',
+              value: 0,
+              className: 'small'
+            }]
+          } else {
+            return [{
+              name: '0',
+              value: 0,
+              className: 'small'
+            }, {
+              name: '1',
+              value: 1,
+              className: 'small'
+            }, {
+              name: '2',
+              value: 2,
+              className: 'small'
+            }, {
+              name: '3',
+              value: 3,
+              className: 'small'
+            }, {
+              name: '4',
+              value: 4,
+              className: 'small'
+            }, {
+              name: '5',
+              value: 5,
+              className: 'small'
+            }]
+          }
+        }
+      }
+    }
+    methods = {
+      onTap(value) {
+        this.setValue(value)
+      }
+    }
+    setValue(value) {
+      this.$emit('marking', {
+        value: value
+      })
+    }
+    autoCheckUnfinishQuestion() {
+      const questions = this.question.questions
+      let pad = {}
+      if (questions.template === 'multi' || questions.template === 'cloze' || questions.template === 'listen') {
+        pad = questions.children[0].pad
+      } else {
+        pad = questions.pad
+      }
+      if (!pad.jsonAnswer.length || pad.jsonAnswer.join('') === '') {
+        this.setValue(0)
+      }
+    }
+  }
+</script>

@@ -1,0 +1,26 @@
+/*
+.question .choice .options,
+.question .multi-choice .options,
+.question .alter .options {
+  margin: 30rpx 0 40rpx 0;
+}
+*/
+
+.question .choice .options,
+.question .multi-choice .options,
+.question .alter .options {
+  padding: 0 0 0 60rpx;
+}
+
+.question .choice .options .option .letter,
+.question .multi-choice .options .option .letter,
+.question .alter .options .option .letter {
+  display: inline-block;
+}
+
+.question .choice .options .option .content,
+.question .multi-choice .options .option .content,
+.question .alter .options .option .content {
+  display: inline-block;
+  width: 576rpx;
+}

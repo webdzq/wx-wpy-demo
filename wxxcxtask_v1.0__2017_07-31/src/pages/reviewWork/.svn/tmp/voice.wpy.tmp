@@ -1,0 +1,210 @@
+<style lang="less">
+  .voice-container {
+    position: relative
+  }
+  .wetoast__bd__title {
+    font-size: 24rpx !important;
+  }
+  .voice-popup {
+    width: 240rpx;
+    height: 239rpx;
+    position: fixed;
+    top: 35%;
+    background: #000;
+    opacity: 0.7;
+    left: 35%;
+    border-radius: 10px;
+  }
+  .voice-popup-undo {
+    width: 240rpx;
+    height: 239rpx;
+    position: fixed;
+    top: 35%;
+    background: #000;
+    opacity: 0.6;
+    left: 35%;
+    border-radius: 10px;
+  }
+  .voice-popup-talk {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    padding: 0;
+  }
+  .voice-popup-speech {
+    width: 100rpx;
+    height: 100rpx;
+    display: inline-block;
+    margin: 44rpx 0rpx;
+  }
+  .voice-popup-title {
+    height: 40rpx;
+    margin-top: -25px;
+    color: #fff;
+    font-size: 24rpx;
+    line-height: 40rpx;
+  }
+  .voice-popup-title-bg {
+    background: #cc0000;
+    border-radius: 3px;
+    margin-left: 6rpx;
+    margin-right: 6rpx;
+  }
+  .weui-cell-talk {
+    width: 100%;
+    height: 100%;
+    display: block;
+    padding:0px;
+    margin-left:14px;
+  }
+  .mini-btn{
+    font-size: 13px;
+    display:block;
+    height:27rpx;
+    line-height:27rpx;
+    margin-top:5px;
+  }
+</style>
+
+<template>
+  <view class="voice-container" bindtouchstart="voicetouchstart" bindtouchmove="voicetouchmove" bindtouchend="voiceTouchend">
+    <image class="weui-cell-talk" src="/images/talk.png" style="width:54rpx;height:54rpx;"></image>
+    <view bindtouchstart="voicetouchstart" bindtouchmove="voicetouchmove" bindtouchend="voiceTouchend" class="weui-btn mini-btn" type="default" size="mini">按住说话</view>
+  </view>
+  <view wx-if="{{isvoicetip}}" class="voice-popup">
+    <view class="voice-popup-speech">
+      <image class="voice-popup-talk" src="/images/talk.png" mode="scaleToFill"></image>
+    </view>
+    <view class="voice-popup-title">手指上滑，取消发送</view>
+  </view>
+  <view wx-if="{{undovoicetip}}" class="voice-popup-undo">
+    <view class="voice-popup-speech">
+      <image class="voice-popup-talk" src="/images/talk.png" mode="scaleToFill"></image>
+    </view>
+    <view class="voice-popup-title voice-popup-title-bg">松开手指，取消发送</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Voice extends wepy.component {
+    props = {
+      jsonAudioComment: {
+        type: Object,
+        dafault: [],
+        twoWay: true
+      }
+    }
+    data = {
+      isvoicetip: false,
+      undovoicetip: false,
+      voiceinitpageX: 0,
+      voiceinitPageY: 0,
+      voiceendpageX: 0,
+      voiceendpageY: 0,
+      tempFilePath: ''
+    }
+    computed = {
+      now() {
+        return +new Date()
+      }
+    }
+    methods = {
+      voicetouchstart(e) {
+        // 开始录音
+        let that = this
+        // console.log('voicetouchstart', this.jsonAudioComment)
+        if (this.jsonAudioComment.length >= 5) {
+          that.$root.$invoke('toast', 'show', {
+            title: '最多可添加5条语音批语',
+            duration: 1000,
+            img: ''
+          }).then((d) => {
+            // console.log('toast done')
+          })
+          return
+        }
+        let touchs = e.touches[0]
+        let pageY = touchs.pageY
+        let recordTime = 0
+        that.voiceinitpageY = pageY
+        that.voiceendpageY = 0
+        let recordTimeInterval = setInterval(function() {
+          recordTime = recordTime += 1
+        }, 1000)
+        wx.startRecord({
+          success: function(res) {
+            // 录音结束后，成功回调
+            that.tempFilePath = res.tempFilePath
+            if (that.voiceendpageY !== 0 && that.voiceinitpageY > that.voiceendpageY + 5) {
+              // 不提交后台
+              return false
+            }
+            // 提交后台
+            // console.log('提交后台')
+            const obj = {
+              length: recordTime,
+              url: that.tempFilePath
+            }
+            that.$emit('voice-broadcast', obj)
+<<<<<<< .mine
+=======
+            that.isvoicetip = false
+            // that.jsonAudioComment.push(obj)
+            // that.$apply()
+            // console.log('that.jsonAudioComment=', that.jsonAudioComment)
+            // wx.showToast({
+            //   title: '语音发送成功',
+            //   icon: 'success',
+            //   duration: 3000
+            // })
+>>>>>>> .r52488
+          },
+          complete: function() {
+            // console.log('startRecord,complete')
+            clearInterval(recordTimeInterval)
+            that.isvoicetip = false
+            that.undovoicetip = false
+          }
+        })
+        this.isvoicetip = true
+      },
+      voicetouchmove(e) {
+        // 录音过程中位置移动
+        // console.log('voicetouchmove..')
+        let touchs = e.touches[0]
+        let pageY = touchs.pageY
+        this.voiceendpageY = pageY
+        if (this.voiceinitpageY > this.voiceendpageY + 5) {
+<<<<<<< .mine
+          this.undovoicetip = true
+          this.isvoicetip = false
+=======
+          that.isvoicetip = false
+          that.undovoicetip = true
+          /** this.$root.$invoke('toast', 'show', {
+              title: '松开手指，取消发送',
+              duration: 10000,
+              img: '/images/record.png'
+            }).then((d) => {
+              // console.log('toast cancel done')
+              that.$root.$invoke('toast', 'hide', {}).then((d) => {
+                // console.log('toast hide done')
+              })
+            })**/
+>>>>>>> .r52488
+        }
+      },
+      voiceTouchend(e) {
+        // console.log('voiceTouchend')
+        // 结束录音
+        this.undovoicetip = false
+        wx.stopRecord()
+        this.isvoicetip = false
+        this.undovoicetip = false
+      }
+    }
+    events = {}
+    onLoad() {}
+  }
+</script>

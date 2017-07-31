@@ -1,0 +1,715 @@
+<style lang="less">
+  .canvas-container {
+    background-color: #fff;
+  }
+  .canvas-element {
+    width: 100%;
+    height: 500rpx;
+  }
+  .brushcur {
+    color: #0052cc;
+  }
+  .color-block {
+    border: 1rpx solid #fff;
+    border-radius: 8rpx;
+    position: fixed;
+    z-index: 8000;
+    bottom: 84px;
+    background-color: #fff;
+    right: 1px;
+    height: 112rpx;
+    width: 512rpx;
+  }
+  .color-btn {
+    text-align: right;
+    color: #7f8389;
+    font-size: 40rpx;
+  }
+  .color-group {
+    margin: 5px 5px;
+    display: inline-block;
+  }
+  .red {
+    color: red;
+    border: 1px solid #f43530;
+    background-color: #f43530;
+  }
+  .black {
+    color: black;
+    border: 1px solid black;
+    background-color: black;
+  }
+  .blue {
+    color: blue;
+    border: 1px solid #0052cc;
+    background-color: #0052cc;
+  }
+  .green {
+    color: green;
+    border: 1px solid #09bb07;
+    background-color: #09bb07;
+  }
+  .bottom-block {
+    background-color: #ccc;
+    padding: 10rpx;
+    position: fixed;
+    bottom: -30rpx;
+    width: 98%;
+  }
+  .image-group {
+    text-align: center;
+  }
+  .canvas-block {
+    border: 1px solid green;
+  }
+  .options-group {
+    text-align: center;
+  }
+  .brush-font {
+    font-size: 40rpx;
+    position: relative;
+    top: -18rpx;
+  }
+  .switch-color-block {
+    border: 1px solid #d6d5d6;
+    border-radius: 8px;
+    background-color: #f43530;
+    height: 70rpx;
+  }
+  .brush-block {
+    margin-left: 20rpx;
+  }
+  .btn-color-block {
+    margin-right: 20rpx;
+  }
+  .color-block-public {
+    margin: 14rpx 20rpx;
+    width: 80rpx;
+    height: 80rpx;
+  }
+  .color-block {
+    border: 1rpx solid #d6d5d6;
+    border-radius: 8px;
+    background-color: #f7f7fa;
+  }
+  .weui-cell-reduction-plus {
+    width: 54rpx;
+    height: 54rpx;
+    display: inline-block;
+    margin-left: 30rpx;
+    padding-top: 20rpx;
+  }
+  .preservation {
+    margin-right: 30rpx;
+  }
+  .weui-cell-reduction {
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin-right: 30rpx;
+  }
+</style>
+
+<template>
+  <view class="canvas-container">
+    <view class="button-block weui-flex">
+      <view>
+        <view class="placeholder weui-cell-reduction-plus" bindtap="resetImage">
+          <image class="weui-cell-reduction" src="/images/reduction.png" mode="scaleToFill"></image>
+        </view>
+      </view>
+      <view class="weui-flex__item">
+        <view class="placeholder options-group">
+          <view class="mini-btn weui-cell-reduction-plus" type="default" size="mini" bindtap="preStep">
+            <image class="weui-cell-reduction" src="/images/prev.png" mode="scaleToFill"></image>
+          </view>
+          <view class="mini-btn weui-cell-reduction-plus" type="default" size="mini" bindtap="nextStep" style="margin-left:40rpx;">
+            <image class="weui-cell-reduction" src="/images/next.png" mode="scaleToFill"></image>
+          </view>
+        </view>
+      </view>
+      <view>
+        <view class="placeholder preservation" bindtap="saveIamge">
+          <view class="placeholder weui-cell-reduction-plus">
+            <image class="weui-cell-reduction" src="/images/determine.png" mode="scaleToFill"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="canvas-block">
+      <canvas class="canvas-element" disable-scroll="true" style="width:{{canvasW}} rpx; height:{{canvasH}} rpx" bindtap="tapCanvas" bindtouchstart="touchstart" bindtouchmove="touchmove" bindtouchcancel="touchcancel" bindtouchend="touchend"  canvas-id="imagecanvas"></canvas>
+    </view>
+    <input wx:if="{{isInputShow}}" class="weui-input" maxlength="10" bindinput="keyInput" bindconfirm="keyConfirm" placeholder="输入同步到view中" />
+    <view class="bottom-block weui-flex">
+      <view class="brush-block" bindtap="brushSwitch">
+        <image src="{{brushImg}}" style="width:80rpx;height:80rpx;position:relative;" />
+        <view class="placeholder brush-font {{!isClearBrush?'brushcur':''}}">画笔</view>
+      </view>
+      <view class="weui-flex__item">
+        <view class="placeholder image-group" bindtap="switchIamge" style="visibility:{{isImglisthidden}};">
+          <block wx:for-items="{{imageArr}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
+            <image data-src="{{item}}" style="width:100rpx;height:100rpx;margin:1px 5px;border-radius:8px;" src="{{item}}" />
+          </block>
+        </view>
+      </view>
+      <view class="btn-color-block" bindtap="selectColor">
+        <view class="switch-color-block" style="background-color:{{backgroundColor}}"> </view>
+        <view class="placeholder color-btn">颜色</view>
+      </view>
+    </view>
+    <view hidden="{{isHideColorBlock}}" class="color-block" bindtap="selectColorBlock">
+      <text class="red color-group color-block-public" data-color="red"> </text>
+      <text class="black color-group color-block-public" data-color="black"> </text>
+      <text class="blue color-group color-block-public" data-color="blue"> </text>
+      <text class="green color-group color-block-public" data-color="green"> </text>
+    </view>
+  </view>
+  <image hidden="hidden" mode="aspectFill" src="{{image}}" bindload="imageOnLoad" binderror="imageOnLoadError" />
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import API from '../../util/api.js'
+  import WZR from '../../util/wezrender.js'
+  export default class Canvas extends wepy.page {
+    config = {
+      navigationBarTitleText: '图片批注'
+    }
+    components = {}
+    mixins = []
+    data = {
+      brushImg: '../../images/pen.png',
+      backgroundColor: 'red',
+      originImageWxPath: '',
+      image: '',
+      imagePath: '',
+      initX: '',
+      initY: '',
+      canvasW: 100,
+      canvasH: 100,
+      olddistance: 0,
+      oldscale: 1,
+      windowWidth: 0,
+      windowHeight: 0,
+      imagePreArr: [],
+      imageNextArr: [],
+      fillStyle: 'red',
+      isInputShow: false,
+      isImglisthidden: 'hidden',
+      isClearBrush: false,
+      isHideColorBlock: true,
+      imageArr: [],
+      token: '',
+      tid: ''
+    }
+    _initCanvas() {
+      this.context = this._creatContext('imagecanvas')
+      // this._initWzriamge()
+      this._saveCurCanvas(this.image)
+    }
+    _initWzriamge() {
+      this.Wzr = WZR.zrender.init('imagecanvas', this.canvasW, this.canvasH)
+      // console.log('_initWzriamge=', this.Wzr)
+      const image = new WZR.graphic.Image({
+        style: {
+          x: 10,
+          y: 10,
+          image: this.image,
+          width: 30,
+          height: 30,
+          text: 'koala'
+        }
+      })
+      this.Wzr.add(image)
+    }
+    _creatContext(canvasId) {
+      const context = wx.createCanvasContext(canvasId)
+      return context
+    }
+    async _saveCurCanvas(image) {
+      // console.log('_saveCurCanvas=', image)
+      await this._drawIamge(this.context, image)
+      const path = this.originImageWxPath || image
+      // this.imagePathToWxfile(image)
+      console.log('_saveCurCanvas，path=', path)
+      this.imagePreArr.push(path)
+      // const path = await this._canvasToTempFilePath('imagecanvas')
+      // console.log('path=', path, this.imagePath)
+    }
+    imagePathToWxfile(image) {
+      const that = this
+      console.log('imagePathToWxfile..', image)
+      if (image.indexOf && image.indexOf('http') !== -1) {
+        // image = image.replace && image.replace(/http:\/\/scc\.jsyxw\.cn/g, 'https://www.yixueyilian.com')
+        // let image = 'http://scc.jsyxw.cn/answer/images/2017/0629/file_5954a7bb75b08.jpg';
+        image = 'https://www.yixueyilian.com' + image.substr(19)
+        // console.log(image);
+      }
+      console.log('imagePathToWxfile..end=', image)
+      if (image.indexOf && image.indexOf('wxfile') !== -1) {
+        that.imagePreArr.push(image)
+      } else {
+        wx.downloadFile({
+          url: image,
+          success: function(res) {
+            that.imagePreArr.push(res.tempFilePath)
+          },
+          fail() {
+            wx.showToast({
+              title: '图片下载失败',
+              icon: 'fail',
+              duration: 2000
+            })
+            that.imagePreArr.push(image)
+          }
+        })
+      }
+    }
+    async _getTempFilePath() {
+      const path = await this._canvasToTempFilePath('imagecanvas')
+      console.log('_getTempFilePath=path=', path)
+      this.imagePreArr.push(path)
+    }
+    _drawIamge(context, image) {
+      const that = this
+      // console.log('_drawIamge=', image, this.canvasW, this.canvasH)
+      // context.drawImage(image, 0, 0, this.canvasW, this.canvasH)
+      // context.draw()
+      // console.log('image=', image)
+      // image = 'https://www.yixueyilian.com/test.png'
+      // http://scc.jsyxw.cn/answer/images/2017/0629/file_5954a7bb75b08.jpg
+      // console.log('image=====', image)
+      // image = image.replace && image.replace(/http:\/\/scc\.jsyxw\.cn/g, 'https://www.yixueyilian.com')
+      if (image.indexOf && image.indexOf('http:') !== -1) {
+        // image = image.replace && image.replace(/http:\/\/scc\.jsyxw\.cn/g, 'https://www.yixueyilian.com')
+        image = 'https://www.yixueyilian.com' + image.substr(19)
+      }
+      if (image.indexOf && image.indexOf('wxfile') !== -1) {
+        that.context.drawImage(image, 0, 0, that.canvasW, that.canvasH)
+        that.context.draw()
+      } else {
+        wx.downloadFile({
+          url: image,
+          success: function(res) {
+            that.originImageWxPath = res.tempFilePath
+            that.context.drawImage(res.tempFilePath, 0, 0, that.canvasW, that.canvasH)
+            that.context.draw()
+          },
+          fail() {
+            wx.showToast({
+              title: '图片下载失败',
+              icon: 'fail',
+              duration: 2000
+            })
+          }
+        })
+      }
+    }
+    _canvasToTempFilePath(canvasId) {
+      let that = this
+      return new Promise((resolve, reject) => {
+        wx.canvasToTempFilePath({
+          canvasId: canvasId,
+          success(res) {
+            // console.log('res=', res)
+            that.imagePath = res.tempFilePath
+            resolve(res.tempFilePath)
+          }
+        })
+      })
+    }
+    _destory() {
+      this.imagePreArr = []
+      this.imageNextArr = []
+    }
+    _fillText(val) {
+      const context = this.context
+      context.setFontSize(20)
+      context.fillText(val, 20, 20)
+      context.fillText(val, 100, 100)
+      context.draw(true)
+    }
+    computed = {
+      now() {
+        return +new Date()
+      }
+    }
+    upload(tempFilePath) {
+      const that = this
+      wx.uploadFile({
+        url: API.HOST_URI + API.submitAnswerImg,
+        filePath: tempFilePath,
+        name: 'file',
+        formData: Object.assign({
+          oriUrl: that.image,
+          ptid: that.pad.ptid,
+          uid: that.pad.uid
+        }, wepy.getStorageSync('xcx_yixueyilian_privacy')),
+        success: function(res) {
+          let data = JSON.parse(res.data)
+          // do something
+          if (data.status.code === 0) {
+            that._destory()
+            wx.navigateBack({
+              delta: 1
+            })
+          } else {
+            wx.showToast({
+              title: data.status.desc,
+              icon: 'fail',
+              duration: 3000
+            })
+          }
+        },
+        fail: function(res) {
+          console.log('fail==', res)
+          // fail
+          wx.showToast({
+            title: '保存图片失败',
+            icon: 'fail',
+            duration: 3000
+          })
+        },
+        complete: function() {
+          // complete
+        }
+      })
+    }
+    methods = {
+      tapCanvas(e) {
+        // this.canvasWidth += 10
+        // console.log('tapCanvas=', new Date().getTime())
+      },
+      keyInput(e) {
+        // 点击输入
+        // console.log('bindKeyInput', e.detail.value)
+      },
+      keyConfirm(e) {
+        // 软键盘完成时触发
+        // console.log('keyConfirm', e.detail.value)
+        this._fillText(e.detail.value)
+      },
+      preStep(e) {
+        // 撤销
+        // console.log('preStep', this.imagePreArr)
+        let len = this.imagePreArr.length
+        if (len < 2) {
+          return
+        }
+        let index = len - 2
+        this.imagePath = this.imagePreArr[index]
+        let element = this.imagePreArr.pop()
+        this.imageNextArr.push(element)
+        // console.log('element=', element)
+        this._drawIamge(this.context, this.imagePath)
+      },
+      nextStep(e) {
+        // 恢复
+        // console.log('nextStep', this.imageNextArr)
+        let len = this.imageNextArr.length
+        if (len < 1) {
+          return
+        }
+        this.imagePath = this.imageNextArr.pop()
+        console.log('this.imagePath=', this.imagePath)
+        this._drawIamge(this.context, this.imagePath)
+        this.imagePreArr.push(this.imagePath)
+      },
+      resetImage(e) {
+        // 恢复原图
+        // console.log('resetImage', e)
+        // this._drawIamge(this.context, this.image)
+        // this.imagePreArr = []
+        // this.imageNextArr = []
+        let that = this
+        let imgUrl = that.image
+        let url = API.HOST_URI + API.getAnswerOriImg
+        let requeststr = {
+          // ptid: that.pad.ptid,
+          // uid: that.pad.uid,
+          tid: that.tid,
+          token: that.token,
+          url: imgUrl
+        }
+        let vdata = {
+          requeststr: JSON.stringify(requeststr)
+        }
+        console.log('resetImage。。。vdata=', vdata)
+        wx.request({
+          url: url,
+          data: requeststr,
+          method: 'GET',
+          success: function(res) {
+            // success
+            console.log('resetImage。。。res=', res)
+            API.validateLogIn(res.data.status.code, function() {
+              console.log('res', res)
+              let curUrl = res.data.data[0].oriUrl
+              if (curUrl.indexOf && curUrl.indexOf('http') !== -1) {
+                curUrl = 'https://www.yixueyilian.com' + curUrl.substr(19)
+              }
+              that._drawIamge(that.context, curUrl)
+              that._destory()
+              that.imagePreArr.push(curUrl)
+            })
+          },
+          fail: function(res) {
+            // fail
+            const str = res && res.errMsg
+            if (str.indexOf('timeout') !== -1) {
+              wx.showToast({
+                title: '请求超时',
+                duration: 3000
+              })
+            }
+          },
+          complete: function() {
+            // complete
+          }
+        })
+        // $.get(url, vdata).then(function(pdata) {
+        //   var data = pdata || {};
+        //   if (typeof data == "string") {
+        //     data = $.parseJSON(data);
+        //   }
+        //   if (data.status.code == 0) {
+        //     var curUrl = data.data[0].oriUrl;
+        //     scope.historyImage(curUrl);
+        //     scope.changeAreaCount = 0;
+        //     scope.historyArr.push(curUrl);
+        //     scope.recoverStatus = 1;
+        //   } else {
+        //     alert('获取失败!');
+        //   }
+        // });
+      },
+      switchIamge(e) {
+        // 切换图片
+        // console.log('switchIamge', e.target.dataset.src)
+        let iamge = e.target.dataset.src
+        this.methods.saveIamge.bind(this)
+        this.imagePreArr = []
+        this.imageNextArr = []
+        // this._saveCurCanvas(iamge)
+        // this.initWH(iamge)
+        this.image = iamge
+        this.originImageWxPath = ''
+        this.isHideColorBlock = true
+        this.$apply()
+      },
+      brushSwitch(e) {
+        // 画笔切换
+        if (this.isClearBrush) {
+          this.brushImg = '../../images/pen.png'
+        } else {
+          this.brushImg = '../../images/pen_1.png'
+        }
+        this.isClearBrush = !this.isClearBrush
+        this.$apply()
+        console.log('brushSwitch', this.brushImg)
+      },
+      saveIamge() {
+        // 保存图片
+        const len = this.imagePreArr.length
+        let path = this.imagePreArr[len - 1] || ''
+        const that = this
+        if (path.indexOf && path.indexOf('http:') !== -1) {
+          // path = path.replace && path.replace(/https:\/\/www\.yixueyilian\.com/g, 'http://scc.jsyxw.cn')
+          wx.showToast({
+            title: '图片未做修改',
+            icon: 'fail',
+            duration: 3000
+          })
+          return
+        }
+        // if (path.indexOf && path.indexOf('https:') !== -1) {
+        //   path = path.replace && path.replace(/https:\/\/www\.yixueyilian\.com/g, 'http://scc.jsyxw.cn')
+        // }
+        console.log('saveIamge...path=', this.imagePreArr, path, len)
+        if (path.indexOf && path.indexOf('http') !== -1) {
+          wx.downloadFile({
+            url: path,
+            success: function(res) {
+              that.upload(res.tempFilePath)
+            },
+            fail() {
+              wx.showToast({
+                title: '图片下载失败',
+                icon: 'fail',
+                duration: 2000
+              })
+            }
+          })
+        } else {
+          that.upload(path)
+        }
+      },
+      selectColor() {
+        // 选择画笔颜色
+        this.isHideColorBlock = !this.isHideColorBlock
+      },
+      selectColorBlock(e) {
+        // console.log('selectColorBlock', e.target.dataset.color)
+        let color = e.target.dataset.color || 'red'
+        this.fillStyle = color
+        this.backgroundColor = color
+        this.isHideColorBlock = !this.isHideColorBlock
+      },
+      touchstart(e) {
+        if (this.isClearBrush) {
+          return
+        }
+        const context = this.context
+        // context.beginPath()
+        // context.rect(25, 25, 50, 50)
+        // context.stroke()
+        // context.scale(2, 2)
+        // context.beginPath()
+        // context.rect(25, 25, 50, 50)
+        // context.stroke()
+        // console.log('touchstart,fillStyle=', this.fillStyle)
+        let touchs = e.changedTouches[0]
+        this.initX = Math.ceil(touchs.x)
+        this.initY = Math.ceil(touchs.y)
+        context.beginPath()
+        // context.setFillStyle(this.fillStyle)
+        context.setStrokeStyle(this.fillStyle)
+        context.setLineCap('round') // 设置线条端点的样式
+        context.setLineJoin('round') // 设置两线相交处的样式
+        context.setLineWidth(2) // 设置线条宽度
+        // console.log('touchstart,fillStyle=', touchs, this.fillStyle)
+        // wx.showToast({
+        //   title: this.initX + ',' + this.initY,
+        //   icon: 'success',
+        //   duration: 2000
+        // })
+      },
+      touchmove(e) {
+        // console.log('touchmove', e.changedTouches)
+        if (this.isClearBrush) {
+          // 关闭画笔，拖动图片
+          return
+        }
+        // if (e.touches.length === 2) {
+        //   // 双指缩放手势
+        //   let xMove = e.touches[1].clientX - e.touches[0].clientX
+        //   let yMove = e.touches[1].clientY - e.touches[0].clientY
+        //   let distance = Math.sqrt(xMove * xMove + yMove * yMove) // 两手指之间的距离
+        //   // console.log('touchmove,distance=', distance)
+        //   if (this.olddistance === 0) {
+        //     // 要是第一次就给他弄上值，什么都不操作
+        //     this.olddistance = distance
+        //     // console.log(this.olddistance)
+        //   } else {
+        //     // 第二次就可以计算它们的差值了
+        //     const newdistance = distance
+        //     const diffdistance = newdistance - this.olddistance
+        //     // 计算之后更新
+        //     this.olddistance = newdistance
+        //     // console.log(diffdistance)
+        //     // 比例
+        //     const newScale = this.oldscale + 0.005 * diffdistance
+        //     // console.log(newScale)
+        //     // 刷新.wxml
+        //     // this.setData({
+        //     //   scaleHeight: newScale * baseHeight,
+        //     //   scaleWidth: newScale * baseWidth
+        //     // })
+        //     this.canvasW = newScale * this.canvasW
+        //     this.canvasH = newScale * this.canvasH
+        //     this.oldscale = newScale // 更新比例
+        //   }
+        // }
+        this.imageNextArr = [] // 清空恢复箱
+        const context = this.context
+        // console.log('touchmove', e)
+        let touchs = e.changedTouches[0]
+        let X = Math.ceil(touchs.x)
+        let Y = Math.ceil(touchs.y)
+        context.moveTo(this.initX, this.initY)
+        context.lineTo(X, Y)
+        // context.moveTo(X, Y)
+        this.initX = X
+        this.initY = Y
+        context.stroke()
+        context.draw(true)
+      },
+      touchcancel(e) {
+        // console.log('touchcancel', e)
+      },
+      touchend(e) {
+        this._getTempFilePath()
+        console.log('touchend=', this.imagePreArr)
+        if (e.touches.length === 2) {
+          this.olddistance = 0
+        }
+      },
+      imageOnLoad(ev) {
+        // console.log(`图片加载成功，width:${ev.detail.width}; height:${ev.detail.height}`)
+        let image = {
+          width: ev.detail.width,
+          height: ev.detail.height
+        }
+        this.initWH(image)
+      }
+    }
+    events = {}
+    initWH(image) {
+      const that = this
+      that.canvasW = that.windowWidth > image.width ? image.width : that.windowWidth - 2
+      that.canvasH = that.windowHeight - 200 > image.height ? image.height : (that.windowHeight - 200)
+      console.log('initWH=', that.windowHeight, that.canvasW, that.canvasH, image.width, image.height)
+      that._initCanvas()
+    }
+    initcanPage(opts) {
+      const that = this
+      this.image = opts.image
+      this.imageArr = JSON.parse(opts.jsonAnswer)
+      this.pad = JSON.parse(opts.pad)
+      if (this.imageArr.length > 1) {
+        this.isImglisthidden = 'visible'
+      }
+      wx.getSystemInfo({
+        success: function(res) {
+          that.pixelRatio = res.pixelRatio
+          that.windowWidth = res.windowWidth
+          that.windowHeight = res.windowHeight
+        }
+      })
+      wx.getStorage({
+        key: 'xcx_yixueyilian_privacy',
+        success(res) {
+          // console.log(res.data)
+          that.token = res.data.token
+          that.tid = res.data.tid
+          // that.reqparams.subjectId = res.data.subjectId
+          // that.reqparams.stageId = res.data.stageId
+          // if (!that.isonload) {
+          //   that.initPageData(that.reqparams, 0, 'init')
+          // } else {
+          //   that.reqparams.start = 0
+          //   that.reqparams.nextPage = 1
+          //   that.initPageData(that.reqparams, 0, '')
+          // }
+          // that.isonload = false
+        },
+        fail(res) {
+          console.log(res.data)
+        }
+      })
+    }
+    onLoad(opts) {
+      // console.log('onload..', opts)
+      this.opts = opts
+      // this.initcanPage(opts)
+    }
+    onReady() {}
+    onShow() {
+      this.initcanPage(this.opts)
+    }
+    onHide() {
+      this.isHideColorBlock = true
+    }
+    onUnload() {}
+  }
+</script>

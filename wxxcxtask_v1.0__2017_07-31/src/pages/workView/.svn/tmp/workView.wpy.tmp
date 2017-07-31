@@ -1,0 +1,464 @@
+<<<<<<< .mine
+<style lang="less">
+.workView_container {
+  .summary {
+    background-color: #efeff4;
+    padding: 38rpx 0 22rpx 30rpx;
+    border-bottom: 1rpx solid #e5e5e5;
+    .total {
+      font-size: 28rpx;
+      color: #888;
+    }
+    .item_list {
+      margin-top: 20rpx;
+      .item {
+        color: #BFBFBF;
+        font-size: 24rpx;
+        display: inline-block;
+        &:not(:last-child) {
+          margin-right: 24rpx;
+        }
+      }
+    }
+  }
+  .sort_list {
+    background-color: #fff;
+    .sort_container {
+      &:not(:last-child) {
+        border-bottom: 1rpx solid #e5e5e5;
+      }
+      .sort_title {
+        font-size: 38rpx;
+        color: #888;
+        line-height: 86rpx;
+        padding: 0 30rpx;
+        border-bottom: 1rpx solid #e5e5e5;
+      }
+      .question_list {
+        .question {
+          &:not(:last-child) {
+            border-bottom: 1rpx solid #e5e5e5;
+          }
+        }
+      }
+    }
+  }
+}
+</style>
+
+<template>
+  <import src="../../components/question/question.wxml" />
+  <view class="workView_container">
+    <view class="summary">
+      <view class="total">共计{{total}}题</view>
+      <view class="item_list">
+        <view class="item" wx:for="{{parsedSortedPt}}" wx:key="*this">{{item.name}}{{item.num}}</view>
+      </view>
+    </view>
+    <view class="sort_list">
+      <block wx:for-items="{{parsedSortedPt}}" wx:for-item="sort" wx:key="">
+        <view class="sort_container">
+          <view class="sort_title">{{sort.name}} ({{sort.num}})</view>
+          <view class="question_list">
+            <block wx:for-items="{{sort.children}}" wx:for-item="question" wx:key="*this">
+              <template is="question" data="{{question: question.questions, display: 'simple'}}">
+              </template>
+            </block>
+          </view>
+        </view>
+      </block>
+    </view>
+    <toast />
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Toast from 'wepy-com-toast'
+import API from '../../util/api.js'
+import QuestionAPI from '../../util/question_api.js'
+import Question from '../../components/question/question.js'
+import {
+  wxParseImgLoad
+} from '../../wxParse/wxParse.js'
+export default class WorkView extends wepy.page {
+  config = {
+    navigationBarTitleText: '作业预览'
+  }
+  components = {
+    toast: Toast
+  }
+  mixins = []
+  data = {
+    question: {},
+    objNum: 0,
+    subNum: 0,
+    sortedPt: [],
+    parsedSortedPt: []
+  }
+  computed = {
+    total() {
+      return this.objNum + this.subNum
+    }
+  }
+  methods = {
+    wxParseImgLoad(e) {
+      const that = this
+      // console.log('parsedSortedPt=', this.parsedSortedPt)
+      wxParseImgLoad.bind(this)(e, function (opts) {
+        // console.log('opts=', opts, opts.imge.target.dataset.src)
+        // console.log('===============start=========')
+        for (let index = 0; index < that.parsedSortedPt.length; index++) {
+          let element = that.parsedSortedPt[index].children
+          for (let j = 0; j < element.length; j++) {
+            let elem = element[j].questions.stem.nodes
+            let options = element[j].questions.options ? element[j].questions.options : []
+            // console.log('questions——' + j, element[j].questions)
+            // console.log('choices-' + j, options)
+            for (let d = 0; d < options.length; d++) {
+              let nodes = options[d].content.nodes
+              for (let k = 0; k < nodes.length; k++) {
+                let node = nodes[k]
+                // console.log('choices-node-' + k, node)
+                if (node.node === 'element' && node.tag === 'img') {
+                  const srcc = opts.imge.target.dataset.src
+                  // console.log('choices-src==', opts.imge, node.attr.src, srcc)
+                  if (node.attr.src === srcc) {
+                    node.height = opts.height
+                    node.width = opts.width
+                    // console.log('==================end=========')
+                  }
+                }
+              }
+            }
+            for (let k = 0; k < elem.length; k++) {
+              let node = elem[k]
+              // console.log('node-' + k, node)
+              if (node.node === 'element' && node.tag === 'img') {
+                const srcc = opts.imge.target.dataset.src
+                // console.log('src==', opts.imge, node.attr.src, srcc)
+                if (node.attr.src === srcc) {
+                  node.height = opts.height
+                  node.width = opts.width
+                  // console.log('==================end=========')
+                }
+              }
+            }
+          }
+        }
+      })
+      // console.log('e=', e, this.parsedSortedPt)
+    }
+  }
+  events = {}
+  onLoad(options) {
+    let that = this
+    this.paperId = options.paperId
+    this.classId = options.classId
+    wepy.request({
+      url: API.HOST_URI + API.getPaper,
+      data: Object.assign({
+        paperId: this.paperId,
+        classId: this.classId
+      }, wepy.getStorageSync('xcx_yixueyilian_privacy')),
+      success(res) {
+        API.validateLogIn(res.data.status.code, function () {
+          const data = res.data.data[0]
+          that.objNum = data.quesnum
+          that.subNum = data.subquesnum
+          that.sortedPt = data.sortedPt
+          that.parsedSortedPt = that.getParsedSortedPt()
+        }, function (code) {
+          that.$invoke('toast', 'show', {
+            title: res.data.status.desc
+          }).then((res) => {
+            if (res.data.status.code === 99) {
+              wepy.switchTab({
+                url: '../login/login'
+              })
+            }
+          })
+        })
+        // if (res.data.status.code === 0) {
+        //   const data = res.data.data[0]
+        //   that.objNum = data.quesnum
+        //   that.subNum = data.subquesnum
+        //   that.sortedPt = data.sortedPt
+        //   that.parsedSortedPt = that.getParsedSortedPt()
+        // } else {
+        //   that.$invoke('toast', 'show', {
+        //     title: res.data.status.desc
+        //   }).then((res) => {
+        //     if (res.data.status.code === 99) {
+        //       wepy.switchTab({
+        //         url: '../login/login'
+        //       })
+        //     }
+        //   })
+        // }
+        that.$apply()
+      }
+    })
+  }
+  getParsedSortedPt() {
+    let sortList = this.sortedPt
+    let globalQIndex = 1
+    sortList.forEach(function (sort, sIndex) {
+      sort.name = QuestionAPI.getTypenameByTypeid(sort.type_id)
+      let questionList = sort.children
+      questionList.forEach(function (question, qIndex) {
+        let questions = question.questions
+        if (questions.template === 'multi' || questions.template === 'cloze') {
+          if (questions.type_id === '8' || questions.type_id === '22') {
+            questions.index = globalQIndex
+            ++globalQIndex
+          } else {
+            questions.index = ''
+            questions.children[0].index = globalQIndex
+            globalQIndex += questions.children.length
+          }
+        } else {
+          questions.index = globalQIndex
+          ++globalQIndex
+        }
+        question.questions = Question.getParsedData(questions)
+      })
+    })
+    return sortList
+  }
+}
+</script>
+=======
+<style lang="less">
+.workView_container {
+  .summary {
+    background-color: #efeff4;
+    padding: 38rpx 0 22rpx 30rpx;
+    border-bottom: 1rpx solid #e5e5e5;
+    .total {
+      font-size: 28rpx;
+      color: #888;
+    }
+    .item_list {
+      margin-top: 20rpx;
+      .item {
+        color: #BFBFBF;
+        font-size: 24rpx;
+        display: inline-block;
+        &:not(:last-child) {
+          margin-right: 24rpx;
+        }
+      }
+    }
+  }
+  .sort_list {
+    background-color: #fff;
+    .sort_container {
+      &:not(:last-child) {
+        border-bottom: 1rpx solid #e5e5e5;
+      }
+      .sort_title {
+        font-size: 34rpx;
+        color: #888;
+        line-height: 86rpx;
+        padding: 0 30rpx;
+        border-bottom: 1rpx solid #e5e5e5;
+      }
+      .question_list {
+        .question {
+          &:not(:last-child) {
+            border-bottom: 1rpx solid #e5e5e5;
+          }
+        }
+      }
+    }
+  }
+}
+.number{
+  color: #888 !important;
+}
+</style>
+
+<template>
+  <import src="../../components/question/question.wxml" />
+  <view class="workView_container">
+    <view class="summary">
+      <view class="total">共计{{total}}题</view>
+      <view class="item_list">
+        <view class="item" wx:for="{{parsedSortedPt}}" wx:key="">{{item.name}}{{item.num}}</view>
+      </view>
+    </view>
+    <view class="sort_list">
+      <block wx:for-items="{{parsedSortedPt}}" wx:for-item="sort" wx:key="">
+        <view class="sort_container">
+          <view class="sort_title">{{sort.name}} ({{sort.num}})</view>
+          <view class="question_list">
+            <block wx:for-items="{{sort.children}}" wx:for-item="question" wx:key="">
+              <template is="question" data="{{question: question.questions, display: 'simple'}}">
+              </template>
+            </block>
+          </view>
+        </view>
+      </block>
+    </view>
+    <toast />
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Toast from 'wepy-com-toast'
+import API from '../../util/api.js'
+import QuestionAPI from '../../util/question_api.js'
+import Question from '../../components/question/question.js'
+import {
+  wxParseImgLoad
+} from '../../wxParse/wxParse.js'
+export default class WorkView extends wepy.page {
+  config = {
+    navigationBarTitleText: '作业预览'
+  }
+  components = {
+    toast: Toast
+  }
+  mixins = []
+  data = {
+    question: {},
+    objNum: 0,
+    subNum: 0,
+    sortedPt: [],
+    parsedSortedPt: []
+  }
+  computed = {
+    total() {
+      return this.objNum + this.subNum
+    }
+  }
+  methods = {
+    wxParseImgLoad(e) {
+      const that = this
+      // console.log('parsedSortedPt=', this.parsedSortedPt)
+      wxParseImgLoad.bind(this)(e, function (opts) {
+        // console.log('opts=', opts, opts.imge.target.dataset.src)
+        // console.log('===============start=========')
+        for (let index = 0; index < that.parsedSortedPt.length; index++) {
+          let element = that.parsedSortedPt[index].children
+          for (let j = 0; j < element.length; j++) {
+            let elem = element[j].questions.stem.nodes
+            let options = element[j].questions.options ? element[j].questions.options : []
+            // console.log('questions——' + j, element[j].questions)
+            // console.log('choices-' + j, options)
+            for (let d = 0; d < options.length; d++) {
+              let nodes = options[d].content.nodes
+              for (let k = 0; k < nodes.length; k++) {
+                let node = nodes[k]
+                // console.log('choices-node-' + k, node)
+                if (node.node === 'element' && node.tag === 'img') {
+                  const srcc = opts.imge.target.dataset.src
+                  // console.log('choices-src==', opts.imge, node.attr.src, srcc)
+                  if (node.attr.src === srcc) {
+                    node.height = opts.height
+                    node.width = opts.width
+                    // console.log('==================end=========')
+                  }
+                }
+              }
+            }
+            for (let k = 0; k < elem.length; k++) {
+              let node = elem[k]
+              // console.log('node-' + k, node)
+              if (node.node === 'element' && node.tag === 'img') {
+                const srcc = opts.imge.target.dataset.src
+                // console.log('src==', opts.imge, node.attr.src, srcc)
+                if (node.attr.src === srcc) {
+                  node.height = opts.height
+                  node.width = opts.width
+                  // console.log('==================end=========')
+                }
+              }
+            }
+          }
+        }
+      })
+      // console.log('e=', e, this.parsedSortedPt)
+    }
+  }
+  events = {}
+  onLoad(options) {
+    let that = this
+    this.paperId = options.paperId
+    this.classId = options.classId
+    wepy.request({
+      url: API.HOST_URI + API.getPaper,
+      data: Object.assign({
+        paperId: this.paperId,
+        classId: this.classId
+      }, wepy.getStorageSync('xcx_yixueyilian_privacy')),
+      success(res) {
+        API.validateLogIn(res.data.status.code, function () {
+          const data = res.data.data[0]
+          that.objNum = data.quesnum
+          that.subNum = data.subquesnum
+          that.sortedPt = data.sortedPt
+          that.parsedSortedPt = that.getParsedSortedPt()
+        }, function (code) {
+          that.$invoke('toast', 'show', {
+            title: res.data.status.desc
+          }).then((res) => {
+            if (res.data.status.code === 99) {
+              wepy.switchTab({
+                url: '../login/login'
+              })
+            }
+          })
+        })
+        // if (res.data.status.code === 0) {
+        //   const data = res.data.data[0]
+        //   that.objNum = data.quesnum
+        //   that.subNum = data.subquesnum
+        //   that.sortedPt = data.sortedPt
+        //   that.parsedSortedPt = that.getParsedSortedPt()
+        // } else {
+        //   that.$invoke('toast', 'show', {
+        //     title: res.data.status.desc
+        //   }).then((res) => {
+        //     if (res.data.status.code === 99) {
+        //       wepy.switchTab({
+        //         url: '../login/login'
+        //       })
+        //     }
+        //   })
+        // }
+        that.$apply()
+      }
+    })
+  }
+  getParsedSortedPt() {
+    let sortList = this.sortedPt
+    let globalQIndex = 1
+    sortList.forEach(function (sort, sIndex) {
+      sort.name = QuestionAPI.getTypenameByTypeid(sort.type_id)
+      let questionList = sort.children
+      questionList.forEach(function (question, qIndex) {
+        let questions = question.questions
+        if (questions.template === 'multi' || questions.template === 'cloze') {
+          if (questions.type_id === '8' || questions.type_id === '22') {
+            questions.index = globalQIndex
+            ++globalQIndex
+          } else {
+            questions.index = ''
+            questions.children[0].index = globalQIndex
+            globalQIndex += questions.children.length
+          }
+        } else {
+          questions.index = globalQIndex
+          ++globalQIndex
+        }
+        question.questions = Question.getParsedData(questions)
+      })
+    })
+    return sortList
+  }
+}
+</script>
+>>>>>>> .r52072

@@ -1,0 +1,3 @@
+.question .answer {
+  padding: 0;
+}

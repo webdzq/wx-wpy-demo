@@ -1,0 +1,28 @@
+<style lang="less">
+.detailWork {}
+</style>
+
+
+<template>
+  <block wx:for-items="{{datalist}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
+    <view id="demo{{index+1}}" class="scroll-view-item_H demo-text-{{index+1}}">
+    </view>
+  </block>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class DetailWork extends wepy.component {
+  data = {}
+  props = {
+  }
+  computed = {
+    now() {
+      return +new Date()
+    }
+  }
+  methods = {}
+  events = {}
+  onLoad() { }
+}
+</script>

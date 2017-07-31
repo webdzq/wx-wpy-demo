@@ -1,0 +1,57 @@
+.question .children {
+  padding: 0 30rpx;
+  border-top: 1px solid #e5e5e5;
+}
+
+.question .children .question:not(:last-child) {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.question .listen .audio_player {
+  display: flex;
+  display: -webkit-flex;
+  padding: 0 0 40rpx 60rpx;
+}
+
+.question .listen .audio_player .audio_bar {
+  padding: 18rpx 0rpx 8rpx 18rpx;
+  border: 1px solid #d6d5d6;
+  border-radius: 10rpx;
+  background-color: #FBFAFC;
+  width: 519rpx;
+}
+
+.question .listen .audio_player .real_audio_player {
+  display: none;
+}
+
+.question .listen .audio_player .audio_bar .voice_icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.question .multi-8 .children .stem_box .number,
+.question .multi-22 .children .stem_box .number {
+  color: #000;
+  background-color: #e5e5e5;
+  border-radius: 25rpx;
+  width: 50rpx;
+  height: 50rpx;
+  line-height: 50rpx;
+  text-align: center;
+}
+
+.question .children .stem_box .stem {
+  width: 560rpx;
+}
+
+.question .children .choice .options .option .content,
+.question .children .multi-choice .options .option .content,
+.question .children .alter .options .option .content {
+  display: inline-block;
+  width: 570rpx;
+}
+
+.question .children .analysis_container {
+  padding: 0 0 0 50rpx;
+}

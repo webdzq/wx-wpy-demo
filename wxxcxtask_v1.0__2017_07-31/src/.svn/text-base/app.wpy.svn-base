@@ -1,0 +1,175 @@
+<style lang="less">
+  @import 'style/weui.wxss';
+  @import 'wxParse/wxParse.wxss';
+  @import 'components/question/question.wxss';
+  .weui-cells:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 1px; // border-top: 1rpx solid #D9D9D9;
+    color: #D9D9D9;
+  }
+  .weui-cells:after {
+    content: " ";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 1px; // border-bottom: 1rpx solid #D9D9D9;
+    color: #D9D9D9;
+  }
+  .container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+  .question .difficulty .full {
+    background: none;
+  }
+  .weui-cell-difficulty {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
+
+<script>
+  import wepy from 'wepy'
+  import 'wepy-async-function'
+  export default class extends wepy.app {
+    config = {
+      pages: [
+        'pages/checkWork/checkWork',
+        'pages/login/login',
+        'pages/resetPassword/resetPassword',
+        'pages/resetSubject/resetSubject',
+        'pages/assignment/assignment',
+        'pages/userInfo/userInfo',
+        'pages/reviewWork/reviewWork',
+        'pages/canvas/canvas',
+        'pages/workView/workView',
+        'pages/workSetion/workSetion',
+        'pages/questionDetail/questionDetail',
+        'pages/index'
+      ],
+      window: {
+        navigationBarBackgroundColor: '#0052cc',
+        navigationBarTitleText: 'index',
+        backgroundColor: '#f0eff5',
+        enablePullDownRefresh: false
+      },
+      tabBar: {
+        color: '#7A7E83',
+        selectedColor: '#0052cc',
+        borderStyle: 'black',
+        backgroundColor: '#ffffff',
+        list: [{
+          pagePath: 'pages/checkWork/checkWork',
+          iconPath: 'images/correcting.png',
+          selectedIconPath: 'images/correcting-hover.png',
+          text: '批改作业'
+        }, {
+          pagePath: 'pages/assignment/assignment',
+          iconPath: 'images/assignment.png',
+          selectedIconPath: 'images/assignment-hover.png',
+          text: '布置作业'
+        }, {
+          pagePath: 'pages/userInfo/userInfo',
+          iconPath: 'images/my.png',
+          selectedIconPath: 'images/my-hover.png',
+          text: '我的'
+        }]
+      },
+      'networkTimeout': {
+        'request': 10000,
+        'downloadFile': 15000,
+        'uploadFile': 15000
+      },
+      'debug': false
+    }
+    globalData = {
+      userInfo: null
+    }
+    constructor() {
+      super()
+      this.abc = 1
+      // this.use('requestfix')
+    }
+    onLaunch() {
+      this.getUserInfo()
+      wx.onNetworkStatusChange(function(res) {
+        console.log(res.isConnected)
+        console.log(res.networkType)
+        if (res.networkType === 'none') {
+          wx.showToast({
+            title: '网络未连接，请检查后重试',
+            duration: 3000
+          })
+          // wx.redirectTo({
+          //   url: '../src/pages/login/login'
+          // })
+        }
+      })
+    }
+    getUserInfo(cb) {
+      const that = this
+      wepy.login({
+        success(res) {
+          wepy.getUserInfo({
+            success(ures) {
+              typeof cb === 'function' && cb(ures.userInfo)
+            }
+          })
+          that.bindStatusQuery(res.code)
+        }
+      })
+    }
+    // query bind status by weixin `code`
+    bindStatusQuery(_code) {
+      wepy.getStorage({
+        key: 'xcx_yixueyilian_privacy',
+        fail() {
+          // request to get bind status from server when`token` & `tid` not in local storage
+          wepy.request({
+            url: 'https://www.yixueyilian.com/wx/user/login.do',
+            data: {
+              code: _code
+            },
+            success(res) {
+              if (res.data.status.code === 0) {
+                // save`token` & `tid` into storage
+                wepy.setStorage({
+                  key: 'xcx_yixueyilian_privacy',
+                  data: {
+                    token: res.data.property.token,
+                    tid: res.data.data[0].tid,
+                    stageId: res.data.property.favSubject.stageId,
+                    subjectId: res.data.property.favSubject.subjectId
+                  }
+                })
+              } else {
+                wepy.redirectTo({
+                  url: 'pages/checkWork/checkWork'
+                })
+              }
+            },
+            fail(res) {
+              const str = res && res.errMsg
+              if (str.indexOf('timeout') !== -1) {
+                wx.showToast({
+                  title: '请求超时',
+                  duration: 3000
+                })
+              }
+            }
+          })
+        }
+      })
+    }
+  }
+</script>
