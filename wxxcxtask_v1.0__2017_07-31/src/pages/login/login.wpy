@@ -90,7 +90,7 @@
   import API from '../../util/api.js'
   export default class Login extends wepy.page {
     config = {
-      navigationBarTitleText: '易学易练老师'
+      navigationBarTitleText: 'xxx'
     }
     components = {
       'child-input': Input,
