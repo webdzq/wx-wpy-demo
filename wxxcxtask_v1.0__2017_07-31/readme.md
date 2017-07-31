@@ -32,9 +32,11 @@
 ## issues 
 1. <navigator>中url的问题。如果是wepy.component中使用，url路径是父级page页面的相对路径，如worklist中的【批改作业】
 2. wx:for和@tap最好不要同时出现在一个view标签里
+## 项目截图：
+![confirmaction](https://github.com/webdzq/wx-wpy-demo/blob/master/wpy-wx-confirmaction/confirmaction.gif)
 ## 参考文档
-[wpy开发文档](https://wepyjs.github.io/wepy/)
-[小程序开发文档](https://mp.weixin.qq.com/debug/wxadoc/dev/index.html?t=2017327)
+[wpy开发文档](https://wepyjs.github.io/wepy/)<br/>
+[小程序开发文档](https://mp.weixin.qq.com/debug/wxadoc/dev/index.html?t=2017327)<br/>
 [VUE开发文档](https://cn.vuejs.org/v2/guide/index.html)
 
 
