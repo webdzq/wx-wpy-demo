@@ -1,5 +1,5 @@
 .question .connect .content_rows {
-  padding: 0 0 0 60rpx;
+  margin: 0 0 30rpx 90rpx;
   position: relative;
 }
 
@@ -21,14 +21,19 @@
 
 .question .connect .content_rows .left,
 .question .connect .content_rows .right {
-  width: 208rpx;
-  height: 148rpx;
+  width: 168rpx;
+  height: 108rpx;
   background-color: #e5e5e5;
   border-radius: 17rpx;
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .question .connect .content_rows .left image,
 .question .connect .content_rows .right image {
-  width: 208rpx;
-  height: 148rpx;
+  width: 168rpx;
+  height: 108rpx;
 }

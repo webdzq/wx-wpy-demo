@@ -1,14 +1,14 @@
 10
 
 dir
-54822
+55880
 http://dongzhengqi@svn2.yanxiu.com/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/images
 http://dongzhengqi@svn2.yanxiu.com
 
 
 
-2017-07-24T02:19:13.587910Z
-54680
+2017-08-01T06:40:56.576709Z
+55540
 yinzhongrong
 
 
@@ -94,40 +94,6 @@ has-props
 
 3089
 
-correcting.png
-file
-
-
-
-
-2017-07-06T02:16:42.000000Z
-367cdd256c577fab1c97a400305f53f2
-2017-07-06T02:14:25.646402Z
-52372
-yinzhongrong
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2892
-
 set_up.png
 file
 
@@ -162,16 +128,16 @@ has-props
 
 3384
 
-pen_1.png
+correcting.png
 file
 
 
 
 
-2017-07-24T02:27:42.000000Z
-d4a76be619a3350f26ee6f326ae77b91
-2017-07-24T02:19:13.587910Z
-54680
+2017-07-06T02:16:42.000000Z
+367cdd256c577fab1c97a400305f53f2
+2017-07-06T02:14:25.646402Z
+52372
 yinzhongrong
 has-props
 
@@ -194,7 +160,41 @@ has-props
 
 
 
-1722
+2892
+
+determines.png
+file
+
+
+
+
+2017-08-02T03:05:17.000000Z
+5c51d6ca2f73fb5bc66f4e6433309d2a
+2017-08-01T06:40:56.576709Z
+55540
+yinzhongrong
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1805
 
 difficulty.png
 file
@@ -229,6 +229,40 @@ has-props
 
 
 1449
+
+pen_1.png
+file
+
+
+
+
+2017-07-24T02:27:42.000000Z
+d4a76be619a3350f26ee6f326ae77b91
+2017-07-24T02:19:13.587910Z
+54680
+yinzhongrong
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1722
 
 playing.png
 file
@@ -298,14 +332,14 @@ has-props
 
 1265
 
-play.png
+warning.png
 file
 
 
 
 
 2017-07-07T02:07:02.000000Z
-fbb7c883f0ca99dccb7cb33a23f03dc6
+012bd4ecd11904eaa4f5fb201c468205
 2017-07-07T02:03:58.057701Z
 52491
 yinzhongrong
@@ -330,7 +364,7 @@ has-props
 
 
 
-1910
+2425
 
 undifficulty.png
 file
@@ -366,14 +400,14 @@ has-props
 
 1710
 
-warning.png
+play.png
 file
 
 
 
 
 2017-07-07T02:07:02.000000Z
-012bd4ecd11904eaa4f5fb201c468205
+fbb7c883f0ca99dccb7cb33a23f03dc6
 2017-07-07T02:03:58.057701Z
 52491
 yinzhongrong
@@ -398,7 +432,7 @@ has-props
 
 
 
-2425
+1910
 
 my-hover.png
 file
@@ -468,40 +502,6 @@ has-props
 
 2829
 
-prev.png
-file
-
-
-
-
-2017-07-06T02:16:42.000000Z
-bf6fc3f22259cfcb4dc5cfb7786386f3
-2017-07-06T02:14:25.646402Z
-52372
-yinzhongrong
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1533
-
 talk-hover.png
 file
 
@@ -535,6 +535,40 @@ has-props
 
 
 2166
+
+prev.png
+file
+
+
+
+
+2017-07-06T02:16:42.000000Z
+bf6fc3f22259cfcb4dc5cfb7786386f3
+2017-07-06T02:14:25.646402Z
+52372
+yinzhongrong
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1533
 
 determine.png
 file

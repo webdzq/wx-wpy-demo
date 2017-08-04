@@ -7,19 +7,24 @@
 
 .question .classify .simple .options .option {
   margin: 30rpx 30rpx 0 0;
-  width: 126rpx;
-  height: 126rpx;
+  padding: 20rpx;
+  width: 86rpx;
+  height: 86rpx;
   background-color: #e5e5e5;
   border-radius: 17rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .question .classify .options .option image {
-  width: 126rpx;
-  height: 126rpx;
+  width: 86rpx;
+  height: 86rpx;
 }
 
 .question .classify .groups {
-  padding: 0 0 0 60rpx;
+  padding: 0 0 30rpx 60rpx;
 }
 
 .question .classify .groups .group .group_name {
@@ -48,8 +53,13 @@
 
 .question .classify .group .options .option {
   margin: 30rpx 30rpx 0 0;
-  width: 126rpx;
-  height: 126rpx;
+  padding: 20rpx;
+  width: 86rpx;
+  height: 86rpx;
   background-color: #fff;
   border-radius: 17rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

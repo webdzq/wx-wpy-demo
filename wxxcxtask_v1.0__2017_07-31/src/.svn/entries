@@ -1,15 +1,15 @@
 10
 
 dir
-54822
+55790
 http://dongzhengqi@svn2.yanxiu.com/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src
 http://dongzhengqi@svn2.yanxiu.com
 
 
 
-2017-07-25T08:53:58.027468Z
-54822
-dongzhengqi
+2017-08-03T07:13:02.901527Z
+55789
+shengshiqi
 
 
 
@@ -37,7 +37,7 @@ dir
 
 config.js
 file
-
+55880
 
 
 
@@ -86,7 +86,7 @@ dir
 
 app.wpy
 file
-
+55880
 
 
 

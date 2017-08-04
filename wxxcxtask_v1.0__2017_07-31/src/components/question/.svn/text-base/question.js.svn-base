@@ -58,14 +58,15 @@ function wxAutoImageCal(originalWidth, originalHeight, that, bindName, shortage)
     success: function (res) {
       // var padding = that.data[bindName].view.imagePadding;
       //   var padding = 60;
-      windowWidth = (res.windowWidth - shortage) * 2;
-      windowHeight = res.windowHeight;
+      //  that.pixelRatio = res.pixelRatio
+      windowWidth = res.windowWidth * res.pixelRatio - shortage * 2;
+      windowHeight = res.windowHeight * res.pixelRatio - shortage * 2;
       // 判断按照那种方式进行缩放
       console.log("windowWidth=", originalWidth, originalHeight, windowWidth, windowHeight);
       if (originalWidth > windowWidth) { //在图片width大于手机屏幕width时候
         autoWidth = windowWidth;
         // console.log("autoWidth" + autoWidth);
-        autoHeight = (autoWidth * originalHeight) / originalWidth;
+        autoHeight = 0.5 * (autoWidth * originalHeight) / originalWidth;
         // console.log("autoHeight" + autoHeight);
         results.imageWidth = autoWidth;
         results.imageheight = autoHeight;
@@ -75,6 +76,7 @@ function wxAutoImageCal(originalWidth, originalHeight, that, bindName, shortage)
       }
     }
   })
+  console.log('results=', results);
   return results;
 }
 

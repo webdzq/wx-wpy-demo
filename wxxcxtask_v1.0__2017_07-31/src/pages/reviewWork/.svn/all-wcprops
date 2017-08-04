@@ -1,13 +1,13 @@
 K 25
 svn:wc:ra_dav:version-url
 V 104
-/!svn/ver/54946/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/pages/reviewWork
+/!svn/ver/55848/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/pages/reviewWork
 END
 reviewWork.wpy
 K 25
 svn:wc:ra_dav:version-url
 V 119
-/!svn/ver/54946/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/pages/reviewWork/reviewWork.wpy
+/!svn/ver/55848/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/pages/reviewWork/reviewWork.wpy
 END
 detailWork.wpy
 K 25
@@ -19,5 +19,5 @@ voice.wpy
 K 25
 svn:wc:ra_dav:version-url
 V 114
-/!svn/ver/54773/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/pages/reviewWork/voice.wpy
+/!svn/ver/55421/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/pages/reviewWork/voice.wpy
 END

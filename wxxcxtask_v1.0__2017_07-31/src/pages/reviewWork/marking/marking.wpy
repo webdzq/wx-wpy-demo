@@ -49,6 +49,9 @@
     width: 108rpx;
     display: inline-block;
   }
+  .marking .buttons wx-button {
+    color: #7f8389;
+  }
 </style>
 
 <template>

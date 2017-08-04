@@ -5,92 +5,106 @@
   .canvas-element {
     width: 100%;
     height: 500rpx;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
   }
   .brushcur {
     color: #0052cc;
   }
   .color-block {
-    border: 1rpx solid #fff;
     border-radius: 8rpx;
     position: fixed;
     z-index: 8000;
-    bottom: 84px;
+    bottom: 130rpx;
     background-color: #fff;
-    right: 1px;
-    height: 112rpx;
-    width: 512rpx;
+    right: 10rpx;
+    width: 272rpx;
+    border: 1rpx solid #d6d5d6;
+    border-radius: 8rpx;
+    background: #f7f7fa;
+    margin-right: 20rpx;
+    display: flex;
+    align-content: center;
   }
   .color-btn {
-    text-align: right;
+    text-align: center;
     color: #7f8389;
-    font-size: 40rpx;
+    font-size: 20rpx;
+    margin-top: -1rpx;
   }
   .color-group {
-    margin: 5px 5px;
     display: inline-block;
   }
   .red {
     color: red;
-    border: 1px solid #f43530;
+    border: 1rpx solid #f43530;
     background-color: #f43530;
   }
   .black {
     color: black;
-    border: 1px solid black;
+    border: 1rpx solid black;
     background-color: black;
   }
   .blue {
     color: blue;
-    border: 1px solid #0052cc;
+    border: 1rpx solid #0052cc;
     background-color: #0052cc;
   }
   .green {
     color: green;
-    border: 1px solid #09bb07;
+    border: 1rpx solid #09bb07;
     background-color: #09bb07;
   }
   .bottom-block {
-    background-color: #ccc;
     padding: 10rpx;
     position: fixed;
-    bottom: -30rpx;
+    bottom: -19rpx;
     width: 98%;
+    height: 98rpx;
+    border-top: 1rpx solid #ababab;
   }
   .image-group {
     text-align: center;
+    height: 98rpx;
+    overflow: hidden;
   }
   .canvas-block {
-    border: 1px solid green;
+    position: relative;
+    height: 800rpx;
+    margin-top: 50rpx;
   }
   .options-group {
     text-align: center;
   }
   .brush-font {
-    font-size: 40rpx;
-    position: relative;
-    top: -18rpx;
+    font-size: 20rpx;
   }
   .switch-color-block {
-    border: 1px solid #d6d5d6;
-    border-radius: 8px;
     background-color: #f43530;
-    height: 70rpx;
+    width: 34rpx;
+    height: 34rpx;
+    margin: 10rpx;
   }
   .brush-block {
-    margin-left: 20rpx;
+    margin-left: 44rpx;
   }
   .btn-color-block {
-    margin-right: 20rpx;
+    margin-right: 54rpx;
   }
   .color-block-public {
-    margin: 14rpx 20rpx;
-    width: 80rpx;
-    height: 80rpx;
+    margin: 14rpx 20rpx 14rpx 0rpx;
+    width: 42rpx;
+    height: 42rpx;
   }
-  .color-block {
-    border: 1rpx solid #d6d5d6;
-    border-radius: 8px;
-    background-color: #f7f7fa;
+  .color-block-red {
+    margin: 14rpx 20rpx 14rpx 14rpx !important;
+  }
+  .color-block-green {
+    margin: 14rpx 14rpx 14rpx 0rpx !important;
   }
   .weui-cell-reduction-plus {
     width: 54rpx;
@@ -107,6 +121,63 @@
     height: 100%;
     display: block;
     margin-right: 30rpx;
+  }
+  .switch-color-block-plus {
+    width: 54rpx;
+    height: 54rpx;
+    border: 1rpx solid #d6d5d6;
+    border-radius: 8rpx;
+  }
+  .imagescale {
+    width: 74rpx !important;
+    height: 74rpx !important;
+    margin: 5rpx 10rpx !important;
+  }
+  .image-box {
+    justify-content: center;
+    display: flex;
+  }
+  .image-group-plus {
+    position: relative;
+    width: 500rpx;
+    float: left;
+    overflow: hidden;
+  }
+  .image-group-plus image {
+    width: 54rpx;
+    height: 54rpx;
+    margin: 15rpx 10rpx;
+    border-radius: 8rpx;
+    border: 1rpx solid #d6d5d6;
+  }
+  .button-block {
+    height: 95rpx;
+    border-bottom: 1rpx solid #e5e5e5;
+  }
+  .pen {
+    color: #7f8389;
+  }
+  .triangle {
+    position: fixed;
+    width: 0;
+    height: 0;
+    border-left: 20rpx solid transparent;
+    border-right: 20rpx solid transparent;
+    border-top: 20rpx solid #f7f7fa;
+    bottom: 112rpx;
+    right: 70rpx;
+    z-index: 8002;
+  }
+  .triangle-border {
+    position: fixed;
+    width: 0;
+    height: 0;
+    border-left: 22.5rpx solid transparent;
+    border-right: 22.5rpx solid transparent;
+    border-top: 22.5rpx solid #d6d5d6;
+    bottom: 110rpx;
+    right: 68rpx;
+    z-index: 8001;
   }
 </style>
 
@@ -131,40 +202,44 @@
       <view>
         <view class="placeholder preservation" bindtap="saveIamge">
           <view class="placeholder weui-cell-reduction-plus">
-            <image class="weui-cell-reduction" src="/images/determine.png" mode="scaleToFill"></image>
+            <image class="weui-cell-reduction" src="/images/determines.png" mode="scaleToFill"></image>
           </view>
         </view>
       </view>
     </view>
     <view class="canvas-block">
-      <canvas class="canvas-element" disable-scroll="true" style="width:{{canvasW}} rpx; height:{{canvasH}} rpx" bindtap="tapCanvas" bindtouchstart="touchstart" bindtouchmove="touchmove" bindtouchcancel="touchcancel" bindtouchend="touchend" canvas-id="imagecanvas"></canvas>
+      <canvas class="canvas-element" disable-scroll="true" style="width:{{canvasW}}px; height:{{canvasH}}px" bindtap="tapCanvas" bindtouchstart="touchstart" bindtouchmove="touchmove" bindtouchcancel="touchcancel" bindtouchend="touchend" canvas-id="imagecanvas"></canvas>
     </view>
     <input wx:if="{{isInputShow}}" class="weui-input" maxlength="10" bindinput="keyInput" bindconfirm="keyConfirm" placeholder="输入同步到view中" />
     <view class="bottom-block weui-flex">
       <view class="brush-block" bindtap="brushSwitch">
-        <image src="{{brushImg}}" style="width:80rpx;height:80rpx;position:relative;" />
-        <view class="placeholder brush-font {{!isClearBrush?'brushcur':''}}">画笔</view>
+        <image src="{{brushImg}}" style="width:54rpx;height:54rpx;display:block;" />
+        <view class="placeholder brush-font {{!isClearBrush?'brushcur':'pen'}}">画笔</view>
       </view>
-      <view class="weui-flex__item">
+      <view class="weui-flex__item image-box">
         <view class="placeholder image-group" bindtap="switchIamge" style="visibility:{{isImglisthidden}};">
-          <block wx:for-items="{{imageArr}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
-            <image data-src="{{item}}" style="width:100rpx;height:100rpx;margin:1px 5px;border-radius:8px;" src="{{item}}" />
-          </block>
+          <view class="image-group-plus">
+            <block wx:for-items="{{imageArr}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
+              <image class="{{image === item?'imagescale':''}}" data-index="index" data-src="{{item}}" src="{{item}}" />
+            </block>
+          </view>
         </view>
       </view>
       <view class="btn-color-block" bindtap="selectColor">
-        <view class="switch-color-block" style="background-color:{{backgroundColor}}"> </view>
+        <view class="switch-color-block-plus">
+          <view class="switch-color-block" style="background-color:{{backgroundColor}}"> </view>
+        </view>
         <view class="placeholder color-btn">颜色</view>
       </view>
     </view>
     <view hidden="{{isHideColorBlock}}" class="color-block" bindtap="selectColorBlock">
-      <text class="red color-group color-block-public" data-color="red"> </text>
-      <text class="black color-group color-block-public" data-color="black"> </text>
-      <text class="blue color-group color-block-public" data-color="blue"> </text>
-      <text class="green color-group color-block-public" data-color="green"> </text>
+      <text class="red color-group color-block-public color-block-red" data-color="#f43530"> </text>
+      <text class="black color-group color-block-public" data-color="#000000"> </text>
+      <text class="blue color-group color-block-public" data-color="#0052cc"> </text>
+      <text class="green color-group color-block-public color-block-green" data-color="#09bb07"> </text>
     </view>
   </view>
-  <image hidden="hidden" mode="aspectFill" src="{{image}}" bindload="imageOnLoad" binderror="imageOnLoadError" />
+  <image hidden="hidden" mode="aspectFit" src="{{image}}" bindload="imageOnLoad" binderror="imageOnLoadError" />
 </template>
 
 <script>
@@ -179,9 +254,10 @@
     mixins = []
     data = {
       brushImg: '../../images/pen.png',
-      backgroundColor: 'red',
+      backgroundColor: '#f43530',
       originImageWxPath: '',
       image: '',
+      curIndex: 0,
       imagePath: '',
       initX: '',
       initY: '',
@@ -232,7 +308,7 @@
       const path = this.originImageWxPath || image
       // this.imagePathToWxfile(image)
       console.log('_saveCurCanvas，path=', path)
-      this.imagePreArr.push(path)
+      this.imagePreArr.push(image)
       // const path = await this._canvasToTempFilePath('imagecanvas')
       // console.log('path=', path, this.imagePath)
     }
@@ -240,9 +316,7 @@
       const that = this
       console.log('imagePathToWxfile..', image)
       if (image.indexOf && image.indexOf('http') !== -1) {
-        // image = image.replace && image.replace(/http:\/\/scc\.jsyxw\.cn/g, 'https://www.xxxxxx.com')
-        // let image = 'http://scc.jsyxw.cn/answer/images/2017/0629/file_5954a7bb75b08.jpg';
-        image = 'https://www.xxxxxx.com' + image.substr(19)
+        image = 'https://www.yixueyilian.com' + image.substr(19)
         // console.log(image);
       }
       console.log('imagePathToWxfile..end=', image)
@@ -272,17 +346,9 @@
     }
     _drawIamge(context, image) {
       const that = this
-      // console.log('_drawIamge=', image, this.canvasW, this.canvasH)
-      // context.drawImage(image, 0, 0, this.canvasW, this.canvasH)
-      // context.draw()
-      // console.log('image=', image)
-      // image = 'https://www.xxxxxx.com/test.png'
-      // http://scc.jsyxw.cn/answer/images/2017/0629/file_5954a7bb75b08.jpg
-      // console.log('image=====', image)
-      // image = image.replace && image.replace(/http:\/\/scc\.jsyxw\.cn/g, 'https://www.xxxxxx.com')
       if (image.indexOf && image.indexOf('http:') !== -1) {
-        // image = image.replace && image.replace(/http:\/\/scc\.jsyxw\.cn/g, 'https://www.xxxxxx.com')
-        image = 'https://www.xxxxx.com' + image.substr(19)
+        // image = image.replace && image.replace(/http:\/\/scc\.jsyxw\.cn/g, 'https://www.yixueyilian.com')
+        image = 'https://www.yixueyilian.com' + image.substr(19)
       }
       if (image.indexOf && image.indexOf('wxfile') !== -1) {
         that.context.drawImage(image, 0, 0, that.canvasW, that.canvasH)
@@ -391,7 +457,7 @@
       },
       preStep(e) {
         // 撤销
-        // console.log('preStep', this.imagePreArr)
+        console.log('preStep', this.imagePreArr)
         let len = this.imagePreArr.length
         if (len < 2) {
           return
@@ -419,8 +485,8 @@
         // 恢复原图
         // console.log('resetImage', e)
         // this._drawIamge(this.context, this.image)
-        // this.imagePreArr = []
-        // this.imageNextArr = []
+        this.imagePreArr = []
+        this.imageNextArr = []
         let that = this
         let imgUrl = that.image
         let url = API.HOST_URI + API.getAnswerOriImg
@@ -435,7 +501,7 @@
           requeststr: JSON.stringify(requeststr)
         }
         console.log('resetImage。。。vdata=', vdata)
-        const param = {
+        wx.request({
           url: url,
           data: requeststr,
           method: 'GET',
@@ -446,7 +512,7 @@
               console.log('res', res)
               let curUrl = res.data.data[0].oriUrl
               if (curUrl.indexOf && curUrl.indexOf('http') !== -1) {
-                curUrl = 'https://www.xxxxxx.com' + curUrl.substr(19)
+                curUrl = 'https://www.yixueyilian.com' + curUrl.substr(19)
               }
               that._drawIamge(that.context, curUrl)
               that._destory()
@@ -466,19 +532,16 @@
           complete: function() {
             // complete
           }
-        }
-        // wx.request()
-        API.testRquestproxy(param)
+        })
       },
       switchIamge(e) {
         // 切换图片
         // console.log('switchIamge', e.target.dataset.src)
         let iamge = e.target.dataset.src
+        // let index = e.target.dataset.index
         this.methods.saveIamge.bind(this)
         this.imagePreArr = []
         this.imageNextArr = []
-        // this._saveCurCanvas(iamge)
-        // this.initWH(iamge)
         this.image = iamge
         this.originImageWxPath = ''
         this.isHideColorBlock = true
@@ -501,7 +564,7 @@
         let path = this.imagePreArr[len - 1] || ''
         const that = this
         if (path.indexOf && path.indexOf('http:') !== -1) {
-          // path = path.replace && path.replace(/https:\/\/www\.xxxxxx\.com/g, 'http://scc.jsyxw.cn')
+          // path = path.replace && path.replace(/https:\/\/www\.yixueyilian\.com/g, 'http://scc.jsyxw.cn')
           wx.showToast({
             title: '图片未做修改',
             icon: 'fail',
@@ -509,9 +572,6 @@
           })
           return
         }
-        // if (path.indexOf && path.indexOf('https:') !== -1) {
-        //   path = path.replace && path.replace(/https:\/\/www\.xxxxxx\.com/g, 'http://scc.jsyxw.cn')
-        // }
         console.log('saveIamge...path=', this.imagePreArr, path, len)
         if (path.indexOf && path.indexOf('http') !== -1) {
           wx.downloadFile({
@@ -547,14 +607,6 @@
           return
         }
         const context = this.context
-        // context.beginPath()
-        // context.rect(25, 25, 50, 50)
-        // context.stroke()
-        // context.scale(2, 2)
-        // context.beginPath()
-        // context.rect(25, 25, 50, 50)
-        // context.stroke()
-        // console.log('touchstart,fillStyle=', this.fillStyle)
         let touchs = e.changedTouches[0]
         this.initX = Math.ceil(touchs.x)
         this.initY = Math.ceil(touchs.y)
@@ -564,12 +616,6 @@
         context.setLineCap('round') // 设置线条端点的样式
         context.setLineJoin('round') // 设置两线相交处的样式
         context.setLineWidth(2) // 设置线条宽度
-        // console.log('touchstart,fillStyle=', touchs, this.fillStyle)
-        // wx.showToast({
-        //   title: this.initX + ',' + this.initY,
-        //   icon: 'success',
-        //   duration: 2000
-        // })
       },
       touchmove(e) {
         // console.log('touchmove', e.changedTouches)
@@ -658,6 +704,8 @@
       }
       wx.getSystemInfo({
         success: function(res) {
+          console.log('getSystemInfo..res=', res)
+          // const density = 1.5
           that.pixelRatio = res.pixelRatio
           that.windowWidth = res.windowWidth
           that.windowHeight = res.windowHeight
@@ -669,16 +717,6 @@
           // console.log(res.data)
           that.token = res.data.token
           that.tid = res.data.tid
-          // that.reqparams.subjectId = res.data.subjectId
-          // that.reqparams.stageId = res.data.stageId
-          // if (!that.isonload) {
-          //   that.initPageData(that.reqparams, 0, 'init')
-          // } else {
-          //   that.reqparams.start = 0
-          //   that.reqparams.nextPage = 1
-          //   that.initPageData(that.reqparams, 0, '')
-          // }
-          // that.isonload = false
         },
         fail(res) {
           console.log(res.data)
@@ -688,14 +726,18 @@
     onLoad(opts) {
       // console.log('onload..', opts)
       this.opts = opts
-      // this.initcanPage(opts)
     }
     onReady() {}
     onShow() {
+      this.imagePreArr = []
+      this.imageNextArr = []
       this.initcanPage(this.opts)
+      console.log('onShow..', this.imagePreArr, this.imageNextArr)
     }
     onHide() {
       this.isHideColorBlock = true
+      this.imagePreArr = []
+      this.imageNextArr = []
     }
     onUnload() {}
   }

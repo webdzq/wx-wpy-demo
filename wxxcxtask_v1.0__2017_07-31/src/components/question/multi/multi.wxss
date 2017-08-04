@@ -1,6 +1,10 @@
 .question .children {
-  padding: 0 30rpx;
+  padding: 0 0 0 60rpx;
   border-top: 1px solid #e5e5e5;
+}
+
+.question .children .question:last-child {
+  padding-bottom: 0;
 }
 
 .question .children .question:not(:last-child) {
@@ -10,7 +14,8 @@
 .question .listen .audio_player {
   display: flex;
   display: -webkit-flex;
-  padding: 0 0 40rpx 60rpx;
+  padding: 0 0 40rpx 90rpx;
+  margin-top: 20rpx;
 }
 
 .question .listen .audio_player .audio_bar {
@@ -30,6 +35,10 @@
   height: 32rpx;
 }
 
+.question .listen .children_1 {
+  padding: 0;
+}
+
 .question .multi-8 .children .stem_box .number,
 .question .multi-22 .children .stem_box .number {
   color: #000;
@@ -38,6 +47,7 @@
   width: 50rpx;
   height: 50rpx;
   line-height: 50rpx;
+  margin-right: 10rpx;
   text-align: center;
 }
 
@@ -49,9 +59,9 @@
 .question .children .multi-choice .options .option .content,
 .question .children .alter .options .option .content {
   display: inline-block;
-  width: 570rpx;
+  width: 540rpx;
 }
 
 .question .children .analysis_container {
-  padding: 0 0 0 50rpx;
+  padding: 0 0 0 30rpx;
 }

@@ -8,8 +8,11 @@
 .question {
   color: #000;
   font-size: 28rpx;
-  padding: 30rpx 0 30rpx 0;
   background-color: #fff;
+}
+
+.question .wxParse-img {
+  background-color: transparent;
 }
 
 .question .stem image,

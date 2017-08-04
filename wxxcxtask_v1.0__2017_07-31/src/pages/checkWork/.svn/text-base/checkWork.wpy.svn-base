@@ -1,33 +1,41 @@
 <style lang="less">
-  page {
-    background: #efeff4;
-  }
-  .checkWork {
-    background-color: #efeff4;
-  }
-  .scroll-view-block {
-    margin-top: 30rpx;
-  }
-  .publish-work-tip {
-    color: #0052cc;
-  }
-  .noresult-block {
-    text-align: center;
-    margin-top: 80rpx;
-  }
-  .publish-work-tip-before {
-    color: #888;
-  }
-  .icon-block {
-    margin-bottom: 60rpx;
-  }
-  .icon-plus {
-    color: #000;
-    opacity: 0.9;
-  }
-  .scroll-view-item {
-    background-color: #fff; // border-top:1px solid #e5e5e5;
-  }
+page {
+  background: #efeff4;
+}
+
+.checkWork {
+  background-color: #efeff4;
+}
+
+.scroll-view-block {
+  margin-top: 30rpx;
+}
+
+.publish-work-tip {
+  color: #0052cc;
+}
+
+.noresult-block {
+  text-align: center;
+  margin-top: 80rpx;
+}
+
+.publish-work-tip-before {
+  color: #888;
+}
+
+.icon-block {
+  margin-bottom: 60rpx;
+}
+
+.icon-plus {
+  color: #000;
+  opacity: 0.9;
+}
+
+.scroll-view-item {
+  background-color: #fff; // border-top:1px solid #e5e5e5;
+}
 </style>
 
 <template>
@@ -77,363 +85,363 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import GradeList from './compt/gradeList'
-  import WorkList from './compt/workList'
-  import API from '../../util/api.js'
-  export default class CheckWork extends wepy.page {
-    config = {
-      navigationBarTitleText: '批改作业',
-      enablePullDownRefresh: true,
-      disableScroll: true
-    }
-    components = {
-      gradeList: GradeList,
-      workList: WorkList
-    }
-    mixins = []
-    data = {
-      marginTop: 30,
-      isGradeList: false,
-      baseline: false,
-      noresult30: false,
-      isonload: false,
-      loadingFailure: false,
-      noresult: false,
-      classList: [],
-      paperList: [],
-      hidden: true,
-      windowHeight: 0,
-      scrollViewHight: 0,
-      scrollViewWidth: 0,
-      windowWidth: 0,
-      scrollTop: 0,
-      cacheScrollTop: 0,
-      toView: '',
-      pageNum: 1,
-      isMorePapers: false,
-      islistMsg: 0, // 0，默认值都隐藏 1-更多历史作业  2,没有更多作业了
-      totalCou: 1,
-      reqparams: {
-        token: '',
-        tid: '',
-        subjectId: '',
-        stageId: '',
-        pageSize: 10,
-        start: 0,
-        nextPage: 1,
-        classStr: '',
-        groupId: '',
-        year: '',
-        month: ''
-      }
-    }
-    computed = {
-      now() {
-        return +new Date()
-      }
-    }
-    onPullDownRefresh(e) {
-      // console.log('onPullDownRefresh...', e)
-      this.initPage()
-    }
-    onReachBottom(e) {
-      console.log('onReachBottom...', e, this.pageNum, this.isMorePapers)
-      if (this.pageNum >= this.totalPage) {
-        if (this.isMorePapers) {
-          // this.noresult30 = true
-          this.islistMsg = 1
-        } else {
-          // this.baseline = true
-          this.islistMsg = 2
-        }
-        this.marginTop = -100
-        this.$apply()
-        // console.log('scrolltolower...', this.isMorePapers, this.noresult30)
-      } else {
-        this.pageNum += 1
-        this.initPageData({
-          start: (this.pageNum - 1) * 10,
-          nextPage: this.pageNum
-        }, this.cacheScrollTop)
-      }
-    }
-    initPageData(params, vscrollTop, vfrom) {
-      const that = this
-      let scrollTop = vscrollTop || this.scrollTop
-      let from = vfrom || 'select'
-      params.from = from
-      params.scrollTop = scrollTop
-      params.window = 30
-      // console.log('initPageData=params', params)
-      if (from === 'init') {
-        this.reqparams.pageSize = 10
-        this.reqparams.start = 0
-        this.reqparams.nextPage = 1
-        this.reqparams.classStr = ''
-        this.reqparams.groupId = ''
-      }
-      this.getList(params, function(data) {
-        // console.log('initPageData..classList', data.data[0].classList)
-        if (from === 'init') {
-          that.classList = data.data[0].classList
-          that.classList.forEach(currentItem => {
-            currentItem.focus = false
-          })
-        }
-        console.log('initPageData..classList', data.data[0].classList)
-        let paperList = data.data[0].paperData.data.paperList
-        console.log('initPageData..paperList', that.paperList)
-        that.totalPage = data.data[0].page.totalPage || false
-        that.isMorePapers = data.data[0].isMorePapers
-        // console.log('that.isMorePapers =', data.data[0].isMorePapers)
-        paperList.forEach(currentItem => {
-          // console.log(currentItem.endtime, that.formatDate(currentItem.endtime))
-          currentItem.end_time = that.formatDate(currentItem.endtime)
-          if (currentItem.wrongQPaper) {
-            currentItem.wrongQPaper.end_time = that.formatDate(currentItem.wrongQPaper.endtime)
-          }
-          currentItem.token = that.reqparams.token
-          currentItem.tid = that.reqparams.tid
-        })
-        that.scrollTop = scrollTop
-        if (that.pageNum >= that.totalPage) {
-          if (that.isMorePapers) {
-            // that.noresult30 = true
-            // that.baseline = false
-            that.islistMsg = 1
-          } else {
-            // that.baseline = true
-            // that.noresult30 = false
-            that.islistMsg = 2
-          }
-        }
-        that.paperList = that.paperList.concat(paperList)
-        console.log('that.pageNum，，，that.paperList=', that.pageNum, that.paperList)
-        that.$apply()
-        // console.log('that.paperList =', that.paperList)
-      })
-    }
-    getList(params, callback) {
-      // host + '/wx/historyHwk/getHistoryMore.do'
-      const that = this
-      // 接口测试方法一：
-      let data = Object.assign(this.reqparams, params)
-      // console.log(data, params)
-      this.hidden = false
-      const param = {
-        url: API.HOST_URI + API.getHistoryMore,
-        data: data,
-        method: 'GET', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
-        // header: {}, // 设置请求的 header
-        success: function(res) {
-          // success
-          // console.log('success=', res)
-          that.loadingFailure = false
-          API.validateLogIn(res.data.status.code, function() {
-            that.noresult = false
-            // that.baseline = false
-            // that.noresult30 = false
-            that.islistMsg = 0
-            callback(res.data)
-          }, function(code) {
-            that.noresult = true
-            // that.noresult30 = false
-            // that.baseline = false
-            // that.classList = []
-            that.islistMsg = 0
-            that.$apply()
-          })
-        },
-        fail: function(res) {
-          that.loadingFailure = true
-          that.islistMsg = 0
-          console.log('fail...', res)
-          const str = res && res.errMsg
-          if (str.indexOf('timeout') !== -1) {
-            wx.showToast({
-              title: '请求超时',
-              duration: 3000
-            })
-          }
-        },
-        complete: function(res) {
-          // complete
-          // console.log('complete...')
-          that.hidden = true
-          that.$apply()
-          wx.stopPullDownRefresh()
-          // console.log('complete...', res)
-        }
-      }
-      wx.request(param)
-    }
-    methods = {
-      pageReload(e) {
-        // 重新加载
-        // console.log('pageReload..', this.reqparams)
-        this.systemfn()
-      },
-      worklistEmit(...args) {
-        // console.log('worklistEmit...')
-      }
-    }
-    formatDate(vtime) {
-      // 格式：2017.05.23 22:00
-      // console.log('vtime=', vtime)
-      const time = vtime || 0
-      const date = new Date(time)
-      const year = date.getFullYear()
-      const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
-      const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-      const hour = date.getHours() > 9 ? date.getHours() : '0' + date.getHours()
-      const minute = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
-      return year + '.' + month + '.' + day + ' ' + hour + ':' + minute
-    }
-    events = {
-      'gradeSelect-worklist': (...args) => {
-        // let $event = args[args.length - 1]
-        let id = args[0]
-        // console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
-        // console.log('gradeSelect-worklist', id)
-        this.paperList = []
-        this.pageNum = 1
-        this.initPageData({
-          classStr: id,
-          start: 0,
-          nextPage: 1
-        }, 0)
-      }
-    }
-    onHide() {
-      console.log('onHide...')
-      this.isonload = true
-    }
-    initPage() {
-      // console.log('checkWork...onShow..', this.reqparams)
-      this.systemfn()
-      this.paperList = []
-      this.pageNum = 1
-      this.islistMsg = 0
-      this.$apply()
-    }
-    onShow() {
-      // this.initPageData({})
-      // this.initPage()
-      console.log('onshow=', this.isonload)
-      // this.isonload = false
-      this.initPage()
-    }
-    async systemfn() {
-      let that = this
-      await wx.getSystemInfo({
-        success(res) {
-          that.windowHeight = res.screenHeight
-          that.windowWidth = res.screenWidth
-          that.scrollViewHight = that.windowHeight - 155
-          that.scrollViewWidth = res.screenWidth
-        }
-      })
-      await wx.getStorage({
-        key: 'xcx_yixueyilian_privacy',
-        success(res) {
-          // console.log(res.data)
-          that.reqparams.token = res.data.token
-          that.reqparams.tid = res.data.tid
-          that.reqparams.subjectId = res.data.subjectId
-          that.reqparams.stageId = res.data.stageId
-          if (!that.isonload) {
-            that.initPageData(that.reqparams, 0, 'init')
-          } else {
-            that.reqparams.start = 0
-            that.reqparams.nextPage = 1
-            that.initPageData(that.reqparams, 0, '')
-          }
-          that.isonload = false
-        },
-        fail(res) {
-          console.log(res.data)
-        }
-      })
-      // await this.initPageData(this.reqparams, 0, 'init')
-    }
-    getAuthorize() {
-      const that = this
-      wx.getSetting({
-        success(res) {
-          if (!res['scope.userInfo']) {
-            wx.authorize({
-              scope: 'scope.userInfo',
-              success() {
-                // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
-                // wx.showToast({
-                //   title: '授权成功',
-                //   icon: 'success',
-                //   duration: 3000
-                // })
-                setTimeout(function() {
-                  wx.getStorage({
-                    key: 'xcx_yixueyilian_privacy',
-                    success(res) {
-                      console.log('res=', res.data)
-                      if (!res.data) {
-                        wx.redirectTo({
-                          url: '../login/login'
-                        })
-                      }
-                    },
-                    fail() {
-                      // 登录态过期
-                      console.log('fail=')
-                      wx.redirectTo({
-                        url: '../login/login'
-                      })
-                    }
-                  })
-                }, 200)
-                that.onPullDownRefresh()
-              },
-              fail() {
-                // wx.showToast({
-                //   title: '您拒绝了授权',
-                //   icon: 'fail',
-                //   duration: 3000
-                // })
-                wx.showModal({
-                  title: '提示',
-                  content: '您拒绝了授权，将无法登录,请设置用户信息，并重新登录',
-                  showCancel: false,
-                  success: function(res) {
-                    if (res.confirm) {
-                      console.log('用户点击确定')
-                      wx.redirectTo({
-                        url: '../login/login'
-                      })
-                    } else if (res.cancel) {
-                      console.log('用户点击取消')
-                      wx.redirectTo({
-                        url: '../login/login'
-                      })
-                    }
-                  }
-                })
-              }
-            })
-          }
-        }
-      })
-    }
-    onLoad() {
-      // console.log('onLoad...')
-      // const that = this
-      this.classList = []
-      this.getAuthorize()
-      this.isonload = false
-    }
-    onUnload() {
-      // this.baseline = false
-      this.islistMsg = 0
-      this.isonload = false
+import wepy from 'wepy'
+import GradeList from './compt/gradeList'
+import WorkList from './compt/workList'
+import API from '../../util/api.js'
+export default class CheckWork extends wepy.page {
+  config = {
+    navigationBarTitleText: '批改作业',
+    enablePullDownRefresh: true,
+    disableScroll: false
+  }
+  components = {
+    gradeList: GradeList,
+    workList: WorkList
+  }
+  mixins = []
+  data = {
+    marginTop: 30,
+    isGradeList: false,
+    baseline: false,
+    noresult30: false,
+    isonload: false,
+    loadingFailure: false,
+    noresult: false,
+    classList: [],
+    paperList: [],
+    hidden: true,
+    windowHeight: 0,
+    scrollViewHight: 0,
+    scrollViewWidth: 0,
+    windowWidth: 0,
+    scrollTop: 0,
+    cacheScrollTop: 0,
+    toView: '',
+    pageNum: 1,
+    isMorePapers: false,
+    islistMsg: 0, // 0，默认值都隐藏 1-更多历史作业  2,没有更多作业了
+    totalCou: 1,
+    reqparams: {
+      token: '',
+      tid: '',
+      subjectId: '',
+      stageId: '',
+      pageSize: 10,
+      start: 0,
+      nextPage: 1,
+      classStr: '',
+      groupId: '',
+      year: '',
+      month: ''
     }
   }
+  computed = {
+    now() {
+      return +new Date()
+    }
+  }
+  onPullDownRefresh(e) {
+    // console.log('onPullDownRefresh...', e)
+    this.initPage()
+  }
+  onReachBottom(e) {
+    console.log('onReachBottom...', e, this.pageNum, this.isMorePapers)
+    if (this.pageNum >= this.totalPage) {
+      if (this.isMorePapers) {
+        // this.noresult30 = true
+        this.islistMsg = 1
+      } else {
+        // this.baseline = true
+        this.islistMsg = 2
+      }
+      this.marginTop = -100
+      this.$apply()
+      // console.log('scrolltolower...', this.isMorePapers, this.noresult30)
+    } else {
+      this.pageNum += 1
+      this.initPageData({
+        start: (this.pageNum - 1) * 10,
+        nextPage: this.pageNum
+      }, this.cacheScrollTop)
+    }
+  }
+  initPageData(params, vscrollTop, vfrom) {
+    const that = this
+    let scrollTop = vscrollTop || this.scrollTop
+    let from = vfrom || 'select'
+    params.from = from
+    params.scrollTop = scrollTop
+    params.window = 30
+    // console.log('initPageData=params', params)
+    if (from === 'init') {
+      this.reqparams.pageSize = 10
+      this.reqparams.start = 0
+      this.reqparams.nextPage = 1
+      this.reqparams.classStr = ''
+      this.reqparams.groupId = ''
+    }
+    this.getList(params, function (data) {
+      // console.log('initPageData..classList', data.data[0].classList)
+      if (from === 'init') {
+        that.classList = data.data[0].classList
+        that.classList.forEach(currentItem => {
+          currentItem.focus = false
+        })
+      }
+      console.log('initPageData..classList', data.data[0].classList)
+      let paperList = data.data[0].paperData.data.paperList
+      console.log('initPageData..paperList', that.paperList)
+      that.totalPage = data.data[0].page.totalPage || false
+      that.isMorePapers = data.data[0].isMorePapers
+      // console.log('that.isMorePapers =', data.data[0].isMorePapers)
+      paperList.forEach(currentItem => {
+        // console.log(currentItem.endtime, that.formatDate(currentItem.endtime))
+        currentItem.end_time = that.formatDate(currentItem.endtime)
+        if (currentItem.wrongQPaper) {
+          currentItem.wrongQPaper.end_time = that.formatDate(currentItem.wrongQPaper.endtime)
+        }
+        currentItem.token = that.reqparams.token
+        currentItem.tid = that.reqparams.tid
+      })
+      that.scrollTop = scrollTop
+      if (that.pageNum >= that.totalPage) {
+        if (that.isMorePapers) {
+          // that.noresult30 = true
+          // that.baseline = false
+          that.islistMsg = 1
+        } else {
+          // that.baseline = true
+          // that.noresult30 = false
+          that.islistMsg = 2
+        }
+      }
+      that.paperList = that.paperList.concat(paperList)
+      console.log('that.pageNum，，，that.paperList=', that.pageNum, that.paperList)
+      that.$apply()
+      // console.log('that.paperList =', that.paperList)
+    })
+  }
+  getList(params, callback) {
+    // host + '/wx/historyHwk/getHistoryMore.do'
+    const that = this
+    // 接口测试方法一：
+    let data = Object.assign(this.reqparams, params)
+    // console.log(data, params)
+    this.hidden = false
+    const param = {
+      url: API.HOST_URI + API.getHistoryMore,
+      data: data,
+      method: 'GET', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
+      // header: {}, // 设置请求的 header
+      success: function (res) {
+        // success
+        // console.log('success=', res)
+        that.loadingFailure = false
+        API.validateLogIn(res.data.status.code, function () {
+          that.noresult = false
+          // that.baseline = false
+          // that.noresult30 = false
+          that.islistMsg = 0
+          callback(res.data)
+        }, function (code) {
+          that.noresult = true
+          // that.noresult30 = false
+          // that.baseline = false
+          // that.classList = []
+          that.islistMsg = 0
+          that.$apply()
+        })
+      },
+      fail: function (res) {
+        that.loadingFailure = true
+        that.islistMsg = 0
+        console.log('fail...', res)
+        const str = res && res.errMsg
+        if (str.indexOf('timeout') !== -1) {
+          wx.showToast({
+            title: '请求超时',
+            duration: 3000
+          })
+        }
+      },
+      complete: function (res) {
+        // complete
+        // console.log('complete...')
+        that.hidden = true
+        that.$apply()
+        wx.stopPullDownRefresh()
+        // console.log('complete...', res)
+      }
+    }
+    wx.request(param)
+  }
+  methods = {
+    pageReload(e) {
+      // 重新加载
+      // console.log('pageReload..', this.reqparams)
+      this.systemfn()
+    },
+    worklistEmit(...args) {
+      // console.log('worklistEmit...')
+    }
+  }
+  formatDate(vtime) {
+    // 格式：2017.05.23 22:00
+    // console.log('vtime=', vtime)
+    const time = vtime || 0
+    const date = new Date(time)
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
+    const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
+    const hour = date.getHours() > 9 ? date.getHours() : '0' + date.getHours()
+    const minute = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
+    return year + '.' + month + '.' + day + ' ' + hour + ':' + minute
+  }
+  events = {
+    'gradeSelect-worklist': (...args) => {
+      // let $event = args[args.length - 1]
+      let id = args[0]
+      // console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
+      // console.log('gradeSelect-worklist', id)
+      this.paperList = []
+      this.pageNum = 1
+      this.initPageData({
+        classStr: id,
+        start: 0,
+        nextPage: 1
+      }, 0)
+    }
+  }
+  onHide() {
+    console.log('onHide...')
+    this.isonload = true
+  }
+  initPage() {
+    // console.log('checkWork...onShow..', this.reqparams)
+    this.systemfn()
+    this.paperList = []
+    this.pageNum = 1
+    this.islistMsg = 0
+    this.$apply()
+  }
+  onShow() {
+    // this.initPageData({})
+    // this.initPage()
+    console.log('onshow=', this.isonload)
+    // this.isonload = false
+    this.initPage()
+  }
+  async systemfn() {
+    let that = this
+    await wx.getSystemInfo({
+      success(res) {
+        that.windowHeight = res.screenHeight
+        that.windowWidth = res.screenWidth
+        that.scrollViewHight = that.windowHeight - 155
+        that.scrollViewWidth = res.screenWidth
+      }
+    })
+    await wx.getStorage({
+      key: 'xcx_yixueyilian_privacy',
+      success(res) {
+        // console.log(res.data)
+        that.reqparams.token = res.data.token
+        that.reqparams.tid = res.data.tid
+        that.reqparams.subjectId = res.data.subjectId
+        that.reqparams.stageId = res.data.stageId
+        if (!that.isonload) {
+          that.initPageData(that.reqparams, 0, 'init')
+        } else {
+          that.reqparams.start = 0
+          that.reqparams.nextPage = 1
+          that.initPageData(that.reqparams, 0, '')
+        }
+        that.isonload = false
+      },
+      fail(res) {
+        console.log(res.data)
+      }
+    })
+    // await this.initPageData(this.reqparams, 0, 'init')
+  }
+  getAuthorize() {
+    const that = this
+    wx.getSetting({
+      success(res) {
+        if (!res['scope.userInfo']) {
+          wx.authorize({
+            scope: 'scope.userInfo',
+            success() {
+              // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
+              // wx.showToast({
+              //   title: '授权成功',
+              //   icon: 'success',
+              //   duration: 3000
+              // })
+              setTimeout(function () {
+                wx.getStorage({
+                  key: 'xcx_yixueyilian_privacy',
+                  success(res) {
+                    console.log('res=', res.data)
+                    if (!res.data) {
+                      wx.redirectTo({
+                        url: '../login/login'
+                      })
+                    }
+                  },
+                  fail() {
+                    // 登录态过期
+                    console.log('fail=')
+                    wx.redirectTo({
+                      url: '../login/login'
+                    })
+                  }
+                })
+              }, 200)
+              that.onShow()
+            },
+            fail() {
+              // wx.showToast({
+              //   title: '您拒绝了授权',
+              //   icon: 'fail',
+              //   duration: 3000
+              // })
+              wx.showModal({
+                title: '提示',
+                content: '您拒绝了授权，将无法登录,请设置用户信息，并重新登录',
+                showCancel: false,
+                success: function (res) {
+                  if (res.confirm) {
+                    console.log('用户点击确定')
+                    wx.redirectTo({
+                      url: '../login/login'
+                    })
+                  } else if (res.cancel) {
+                    console.log('用户点击取消')
+                    wx.redirectTo({
+                      url: '../login/login'
+                    })
+                  }
+                }
+              })
+            }
+          })
+        }
+      }
+    })
+  }
+  onLoad() {
+    // console.log('onLoad...')
+    // const that = this
+    this.classList = []
+    this.getAuthorize()
+    this.isonload = false
+  }
+  onUnload() {
+    // this.baseline = false
+    this.islistMsg = 0
+    this.isonload = false
+  }
+}
 </script>

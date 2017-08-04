@@ -4,7 +4,7 @@
   }
   .workSetion-container {
     background-color: #fff;
-    padding: 0 30rpx;
+    padding: 0 0 0 30rpx;
   }
   .grade-name {
     color: #888;
@@ -16,9 +16,8 @@
     border-bottom: 1px solid #e5e5e5;
   }
   .weui-cells_after-title .weui-cell {
-    height: 86rpx;
-    line-height: 86rpx;
-    padding: 0;
+    line-height:48rpx;
+    padding:16rpx 0rpx;
   }
   .workSetion-main {
     border-top: 1px solid #e5e5e5;
@@ -35,6 +34,8 @@
   }
   .weui-cell__ft-plus {
     padding-right: 30px;
+    width:470rpx;
+    margin-right:30rpx;
   }
   .weui-cell__ft_in-access::after {
     right: 13px;
@@ -58,6 +59,7 @@
     width: 54rpx;
     height: 54rpx;
     display: inline-block;
+    margin-right:30rpx;
   }
   .weui-cell-delect {
     width: 100%;
@@ -107,16 +109,16 @@
             <view wx:if="{{isPublished}}" class="weui-cell__ft  weui-cell__ft-plus">{{getPublish_time}}</view>
             <view wx:else class="weui-cell__ft weui-cell__ft_in-access" data-id="1" bindtap="selectPicker">{{getPublish_time}}</view>
             <!-- <view class="workSetion_icon">
-                                                    <image class="weui-cell-setup" data-item="{{}}" catchtap="worksetion" src="{{imagesrc}}" mode="scaleToFill"></image>
-                                                  </view>  -->
+                                                  <image class="weui-cell-setup" data-item="{{}}" catchtap="worksetion" src="{{imagesrc}}" mode="scaleToFill"></image>
+                                                </view>  -->
           </view>
           <view class="weui-cell weui-cell_access" hover-class="weui-cell_active">
             <view class="weui-cell__bd">截止时间</view>
             <view wx:if="{{isEndTimed}}" class="weui-cell__ft weui-cell__ft-plus">{{getEnd_time}}</view>
             <view wx:else class="weui-cell__ft weui-cell__ft-plus weui-cell__ft_in-access" data-id="2" bindtap="selectPicker">{{getEnd_time}}</view>
             <!-- <view class="workSetion_icon">
-                                                    <image class="weui-cell-setup" data-item="{{}}" catchtap="worksetion" src="{{imagesrc}}" mode="scaleToFill"></image>
-                                                  </view> -->
+                                                  <image class="weui-cell-setup" data-item="{{}}" catchtap="worksetion" src="{{imagesrc}}" mode="scaleToFill"></image>
+                                                </view> -->
           </view>
         </view>
       </view>
@@ -274,8 +276,7 @@
           // complete
         }
       }
-      // wx.request(param)
-      API.testRquestproxy(param)
+      wx.request(param)
     }
     methods = {
       initDateemitHandle() {
@@ -374,8 +375,7 @@
             if (res.confirm) {
               console.log('用户点击主操作')
               that.cofirmhidden = false
-              // wx.request(param)
-              API.testRquestproxy(param)
+              wx.request(param)
             } else {
               console.log('用户点击辅助操作')
               that.cofirmhidden = false

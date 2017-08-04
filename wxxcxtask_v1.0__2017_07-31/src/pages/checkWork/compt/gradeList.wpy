@@ -9,16 +9,18 @@
     border: 1px solid red;
   }
   .grade-btn {
-    color: #0052cc !important;
-    border: 1px solid #0052cc !important;
+    color: #000 !important;
+    border: 1px solid #e7e7e7 !important;
     margin: 0px 30rpx 0px 0rpx;
-    line-height: 58rpx;
+    line-height: 48rpx;
     text-align: center;
     width: 210rpx;
     padding: 0rpx;
   }
   .btn-cur {
-    color: red !important;
+    color: #0052cc !important;
+    border: 1px solid #0052cc !important;
+    background: #eff5ff !important;
   }
   .grade-name {
     color: #888;
@@ -26,24 +28,32 @@
     font-size: 28rpx;
   }
   .btn-block {
-    // margin: 18rpx 0rpx;
     background: #fff;
-    padding: 18rpx 30rpx;
-    border-top: 1px solid #e5e5e5;
-    border-bottom: 1px solid #e5e5e5;
+    padding:0rpx 30rpx 18rpx 30rpx;
   }
   button[type="primary"][plain] {
     color: #0052cc;
   }
-  .weui-cells::after{
-    border-bottom:0px;
-  } 
+  .weui-cells::after {
+    border-bottom: 0px;
+  }
+  .weui-cell {
+    -webkit-box-align: flex-start;
+    -webkit-align-items: flex-start;
+    align-items: flex-start;
+  }
+  .grade_box {
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    padding-top:9px;
+    background:#fff;
+  }
 </style>
 
 <template>
   <view class="grade">
     <view class="grade-name">班级</view>
-    <view bindtap="tapGradeSelect">
+    <view class="grade_box" bindtap="tapGradeSelect">
       <view class="weui-flex btn-block">
         <block wx:for-items="{{classList}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
           <button wx-if="{{index<3}}" data-index="{{index}}" data-id="{{item.id}}" class="weui-btn grade-btn {{item.focus?'btn-cur':''}}" type="primary" plain="true">{{item.name}}</button>

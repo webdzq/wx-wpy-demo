@@ -3,17 +3,20 @@
   background-color: #efeff4;
   .summary {
     background-color: #efeff4;
-    padding: 30rpx 0 0 30rpx;
+    padding: 36rpx 0 0 30rpx;
     .total {
       font-size: 28rpx;
       color: #888;
     }
     .item_list {
-      margin-top: 20rpx;
+      padding: 5rpx 0 15rpx;
+      display: flex;
+      flex-wrap: wrap;
       .item {
         color: #BFBFBF;
         font-size: 24rpx;
         display: inline-block;
+        margin-top: 5rpx;
         &:not(:last-child) {
           margin-right: 24rpx;
         }

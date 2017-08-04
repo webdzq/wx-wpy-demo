@@ -13,7 +13,7 @@
     margin: 0rpx 0rpx;
   }
   .weui-cell-plus {
-    padding: 22rpx 30rpx 18rpx 30rpx !important;
+    padding: 22rpx 30rpx 8rpx 30rpx !important;
   }
   .weui-media-box__info_plus {
     padding: 0rpx 30rpx 22rpx 30rpx;
@@ -28,7 +28,7 @@
   .weui-cells_after-title_plus {
     line-height: 86rpx;
     text-align: right;
-    margin: 0px 30rpx;
+    margin: 0rpx 0rpx 0rpx 30rpx;
   }
   .font-style {
     color: #888;
@@ -36,10 +36,12 @@
   .class-name {
     text-align: left !important;
     color: #000;
+    line-height: 48rpx;
+    margin: 20rpx 0rpx;
   }
   .weui-btn-plus {
     font-size: 32rpx !important;
-    width: 300rpx;
+    width: 330rpx;
     padding: 0rpx;
     margin-left: 0rpx;
   }
@@ -54,7 +56,7 @@
   }
   .weui-flex-plus-btn {
     padding: 24rpx 30rpx 30rpx 30rpx;
-    border-top:1px solid #e5e5e5;
+    border-top: 1rpx solid #e5e5e5;
   }
   .slash {
     color: #888888;
@@ -74,6 +76,22 @@
   }
   .other-button-hover {
     background-color: red;
+  }
+  .pending {
+    margin-right: 30rpx;
+    text-align: left;
+  }
+  .weui-media-box__info__meta {
+    padding-right: 10rpx;
+  }
+  .weui-cells::before {
+    border-top: 1rpx solid #e5e5e5;
+  }
+  .submit_box {
+    text-align: left;
+  }
+  .weui-flex__item_plus {
+    margin-right: 10rpx;
   }
 </style>
 
@@ -102,7 +120,7 @@
                     <view class="placeholder class-name">{{citem.className}} {{citem.groupName}}</view>
                   </view>
                   <view class="weui-flex__item weui-flex__item_plus">
-                    <view class="placeholder">
+                    <view class="placeholder submit_box">
                       <text class="font-style">提交:</text>
                       <text class="font-style-number">{{(citem.finishNum>9||citem.finishNum==0)?citem.finishNum:'0'+citem.finishNum}}</text>
                       <text class="slash">/</text>
@@ -110,7 +128,7 @@
                     </view>
                   </view>
                   <view class="weui-flex__item">
-                    <view class="placeholder" hidden="{{citem.finishNum - citem.checkedNum===0}}">
+                    <view class="placeholder pending" hidden="{{citem.finishNum - citem.checkedNum===0}}">
                       <text class="font-style">待批:</text> {{((citem.finishNum - citem.checkedNum)>9||(citem.finishNum - citem.checkedNum)==0)?(citem.finishNum - citem.checkedNum):'0'+(citem.finishNum - citem.checkedNum)}}
                     </view>
                   </view>
@@ -122,15 +140,15 @@
             <view class="weui-flex__item">
               <block wx:if="{{item.isCurrentGroupId}}">
                 <navigator url='../reviewWork/reviewWork?groupIds={{item.groupIds}}&paperId={{item.id}}&currentGroupId={{item.currentGroupId[0]}}&recheck={{recheck}}' hover-class="navigator-hover">
-                  <button class="weui-btn weui-btn-plus" type="default" plain="true">批改作业</button>
+                  <button class="weui-btn weui-btn-plus" plain="true">批改作业</button>
                 </navigator>
               </block>
               <block wx:else>
-                <button class="weui-btn weui-btn-plus " type="default" plain="true" disabled="true">批改作业</button>
+                <button class="weui-btn weui-btn-plus " plain="true" disabled="true">批改作业</button>
               </block>
             </view>
             <view class="weui-flex__item">
-              <button class="weui-btn weui-btn-plus float-right" type="default" plain="true" disabled="true">查看报告</button>
+              <button class="weui-btn weui-btn-plus float-right" plain="true" disabled="true">查看报告</button>
             </view>
           </view>
         </view>
@@ -156,13 +174,13 @@
                       <view class="placeholder class-name">{{citem.className}} {{citem.groupName}}</view>
                     </view>
                     <view class="weui-flex__item weui-flex__item_plus">
-                      <view class="placeholder">
+                      <view class="placeholder submit_box">
                         <text class="font-style">提交:</text> {{(citem.finishNum>9||citem.finishNum==0)?citem.finishNum:'0'+citem.finishNum}}/
                         <text class="font-style">{{(citem.finishNum+citem.unfinishNum)>9?(citem.finishNum+citem.unfinishNum):'0'+(citem.finishNum+citem.unfinishNum)}}</text>
                       </view>
                     </view>
                     <view class="weui-flex__item">
-                      <view class="placeholder" hidden="{{citem.finishNum - citem.checkedNum===0}}">
+                      <view class="placeholder pending" hidden="{{citem.finishNum - citem.checkedNum===0}}">
                         <text class="font-style">待批:</text> {{((citem.finishNum - citem.checkedNum)>9||(citem.finishNum - citem.checkedNum)==0)?(citem.finishNum - citem.checkedNum):'0'+(citem.finishNum - citem.checkedNum)}}
                       </view>
                     </view>

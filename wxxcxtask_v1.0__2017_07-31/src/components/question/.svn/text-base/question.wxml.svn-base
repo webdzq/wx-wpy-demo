@@ -59,9 +59,7 @@
 <!--难度模板-->
 <template name="difficulty">
   <view class="difficulty">
-    <view class="difficulty-tit">
-      难度：
-    </view>
+    <view class="difficulty-tit">难度：</view>
     <block wx:for="{{[1, 2, 3, 4, 5]}}" wx:for-item="number" wx:key="">
       <block wx:if="{{number <= difficulty}}">
         <view class="full">
@@ -80,9 +78,7 @@
 <!--答案模板-->
 <template name="answer">
   <view class="answers">
-    <view class="answer-tit">
-      答案：
-    </view>
+    <view class="answer-tit">答案：</view>
     <view class="answer-text">
       <block wx:if="{{template == 'fill' || template == 'answer'}}">
         <template is="wxParse" data="{{wxParseData:answer.nodes}}"></template>
@@ -97,9 +93,7 @@
 <!--解析模板-->
 <template name="analysis">
   <view class="analysis">
-    <view class="analysis-tit">
-      解析：
-    </view>
+    <view class="analysis-tit">解析：</view>
     <view class="analysis-text">
       <template is="wxParse" data="{{wxParseData:analysis.nodes}}"></template>
     </view>
@@ -109,12 +103,8 @@
 <!--知识点模板-->
 <template name="point">
   <view class="point">
-    <view class="point-tit">
-      知识点：
-    </view>
-    <view class="point-text">
-      {{point}}
-    </view>
+    <view class="point-tit">知识点：</view>
+    <view class="point-text">{{point}}</view>
   </view>
 </template>
 
@@ -217,7 +207,8 @@
 <!--计算/解答/材料阅读/阅读理解/听力/听音/完形填空模板-->
 <template name="multi">
   <view class="{{template}} {{template}}-{{type_id}}">
-    <template is="stem" data="{{stem: stem, type_id: type_id, index: index, questionId: id, display: display, firstChildIndex: children[0].index}}" />
+    <template is="stem" data="{{stem: stem, type_id: type_id, index: index, questionId: id, display: display, firstChildIndex: children[0].index}}"
+    />
     <block wx:if="{{template === 'listen'}}">
       <template is="audioPlayer" data="{{questionId: id, audioSrc: url, isPlaying: isPlaying}}" />
     </block>
@@ -229,7 +220,7 @@
       </view>
     </block>
     <block wx:if="{{children.length}}">
-      <view class="children">
+      <view class="children children_{{children.length}}">
         <block wx:for-items="{{children}}" wx:for-item="child" wx:key="">
           <view class="question">
             <block wx:if="{{child.template === 'choice'}}">

@@ -1,37 +1,45 @@
 <style lang="less">
-  .page {
-    .weui-cells {
-      margin-top: 30rpx;
-      &:after {
-        border-bottom: 1rpx solid #E5E5E5;
-        color: #E5E5E5;
-      }
-      &:before {
-        border-top: 1rpx solid #E5E5E5;
-        color: #E5E5E5;
-      }
-      .real_name,
-      .school_name {
-        margin-right: 27rpx;
-      }
+.page {
+  .weui-cells {
+    margin-top: 30rpx;
+    &:after {
+      border-bottom: 1rpx solid #E5E5E5;
+      color: #E5E5E5;
     }
-    .weui-btn {
-      margin: 30rpx 0rpx 0;
-      background: #fff;
-      color: #000;
-      border-radius: 0px !important;
+    &:before {
+      border-top: 1rpx solid #E5E5E5;
+      color: #E5E5E5;
+    }
+    .real_name,
+    .school_name {
+      margin-right: 27rpx;
     }
   }
-  page {
-    background-color: #efeff4;
+  .logout_btn {
+    margin: 30rpx 0rpx 0;
+    background-color: #fff;
+    color: #000;
+    height: 84rpx;
+    line-height: 84rpx;
+    border-top: 1rpx solid #e5e5e5;
+    border-bottom: 1rpx solid #e5e5e5;
+    font-size: 34rpx;
+    text-align: center;
   }
-  .my_name,
-  .my_school {
-    margin-right: 30rpx;
-  }
-  .weui-cell__ft_in-access {
-    padding-right: 30rpx;
-  }
+}
+
+page {
+  background-color: #efeff4;
+}
+
+.my_name,
+.my_school {
+  margin-right: 30rpx;
+}
+
+.weui-cell__ft_in-access {
+  padding-right: 30rpx;
+}
 </style>
 
 
@@ -55,97 +63,61 @@
         <view class="weui-cell__ft weui-cell__ft_in-access">{{stageName}}{{subjectName}}</view>
       </navigator>
     </view>
-    <button class="weui-btn" type="warn" @tap="logout">退出登录</button>
+    <view class="logout_btn" @tap="logout">退出登录</view>
     <toast />
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import Toast from 'wepy-com-toast'
-  import API from '../../util/api.js'
-  export default class UserInfo extends wepy.page {
-    config = {
-      navigationBarTitleText: '我的'
+import wepy from 'wepy'
+import Toast from 'wepy-com-toast'
+import API from '../../util/api.js'
+export default class UserInfo extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的'
+  }
+  components = {
+    toast: Toast
+  }
+  mixins = []
+  data = {
+    realName: '',
+    schoolName: '',
+    stageName: '',
+    subjectName: ''
+  }
+  computed = {
+    now() {
+      return +new Date()
     }
-    components = {
-      toast: Toast
-    }
-    mixins = []
-    data = {
-      realName: '',
-      schoolName: '',
-      stageName: '',
-      subjectName: ''
-    }
-    computed = {
-      now() {
-        return +new Date()
-      }
-    }
-    methods = {
-      logout(e) {
-        let self = this
-        const param = {
-          url: API.HOST_URI + API.logout,
-          data: wepy.getStorageSync('xcx_yixueyilian_privacy'),
-          success(res) {
-            if (res.data.status.code === 0) {
-              wepy.removeStorage({
-                key: 'xcx_yixueyilian_privacy',
-                success() {
-                  wepy.redirectTo({
-                    url: '../login/login'
-                  })
-                }
-              })
-            } else {
-              self.$invoke('toast', 'show', {
-                title: res.data.status.desc
-              }).then((res) => {
-                // console.log(res)
+  }
+  methods = {
+    logout(e) {
+      let self = this
+      wepy.request({
+        url: API.HOST_URI + API.logout,
+        data: wepy.getStorageSync('xcx_yixueyilian_privacy'),
+        success(res) {
+          if (res.data.status.code === 0) {
+            wepy.removeStorage({
+              key: 'xcx_yixueyilian_privacy',
+              success() {
                 wepy.redirectTo({
                   url: '../login/login'
                 })
-              })
-            }
-            self.$apply()
-          },
-          fail(res) {
-            const str = res && res.errMsg
-            if (str.indexOf('timeout') !== -1) {
-              wx.showToast({
-                title: '请求超时',
-                duration: 3000
-              })
-            }
-          }
-        }
-        // wepy.request()
-        API.testRquestproxy(param)
-      }
-    }
-    events = {}
-    onLoad() {
-      this.getUserInfo()
-    }
-    getUserInfo() {
-      let that = this
-      const param = {
-        url: API.HOST_URI + API.getUserInfo,
-        data: wepy.getStorageSync('xcx_yixueyilian_privacy'),
-        success(res) {
-          API.validateLogIn(res.data.status.code, function() {
-            that.realName = res.data.data[0].realname
-            that.schoolName = res.data.data[0].schoolname
-            that.stageName = res.data.property.favSubject.stageName
-            that.subjectName = res.data.property.favSubject.subjectName
-          }, function(code) {
-            that.$invoke('toast', 'show', {
-              title: res.data.status.desc
+              }
             })
-          })
-          that.$apply()
+          } else {
+            self.$invoke('toast', 'show', {
+              title: res.data.status.desc
+            }).then((res) => {
+              // console.log(res)
+              wepy.redirectTo({
+                url: '../login/login'
+              })
+            })
+          }
+          self.$apply()
         },
         fail(res) {
           const str = res && res.errMsg
@@ -156,12 +128,60 @@
             })
           }
         }
-      }
-      // wepy.request()
-      API.testRquestproxy(param)
-    }
-    onShow() {
-      this.getUserInfo()
+      })
     }
   }
+  events = {}
+  onLoad() {
+    this.getUserInfo()
+  }
+  getUserInfo() {
+    let that = this
+    wepy.request({
+      url: API.HOST_URI + API.getUserInfo,
+      data: wepy.getStorageSync('xcx_yixueyilian_privacy'),
+      success(res) {
+        API.validateLogIn(res.data.status.code, function () {
+          that.realName = res.data.data[0].realname
+          that.schoolName = res.data.data[0].schoolname
+          that.stageName = res.data.property.favSubject.stageName
+          that.subjectName = res.data.property.favSubject.subjectName
+        }, function (code) {
+          that.$invoke('toast', 'show', {
+            title: res.data.status.desc
+          })
+        })
+        // if (res.data.status.code === 0) {
+        //   that.realName = res.data.data[0].realname
+        //   that.schoolName = res.data.data[0].schoolname
+        //   that.stageName = res.data.property.favSubject.stageName
+        //   that.subjectName = res.data.property.favSubject.subjectName
+        // } else {
+        //   that.$invoke('toast', 'show', {
+        //     title: res.data.status.desc
+        //   }).then((res) => {
+        //     // if (res.data.status.code === 99) {
+        //     wepy.switchTab({
+        //       url: '../login/login'
+        //     })
+        //     // }
+        //   })
+        // }
+        that.$apply()
+      },
+      fail(res) {
+        const str = res && res.errMsg
+        if (str.indexOf('timeout') !== -1) {
+          wx.showToast({
+            title: '请求超时',
+            duration: 3000
+          })
+        }
+      }
+    })
+  }
+  onShow() {
+    this.getUserInfo()
+  }
+}
 </script>

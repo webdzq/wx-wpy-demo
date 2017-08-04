@@ -1,18 +1,19 @@
 .stem_box {
   font-size: 34rpx;
-  padding: 0 30rpx;
+  padding: 36rpx 30rpx 20rpx;
 }
 
 .stem_box .number {
   display: inline-block;
   color: #0052cc;
-  margin-right: 8rpx;
+  width: 60rpx;
   vertical-align: top;
 }
 
 .stem_box .stem {
   display: inline-block;
   width: 610rpx;
+  vertical-align: top;
 }
 
 .stem_box .stem .fill_blank {

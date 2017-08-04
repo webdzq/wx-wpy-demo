@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 112
-/!svn/ver/55190/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/components/question/stem
+/!svn/ver/55759/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/components/question/stem
 END
 stem.js
 K 25
@@ -13,5 +13,5 @@ stem.wxss
 K 25
 svn:wc:ra_dav:version-url
 V 122
-/!svn/ver/55190/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/components/question/stem/stem.wxss
+/!svn/ver/55759/yanxiu/yanxiu-fe/branches/wxxcx_branches/wxxcxtask_v1.0__2017_05_03/src/components/question/stem/stem.wxss
 END

@@ -4,7 +4,7 @@
   }
   .workSetion-container {
     background-color: #fff;
-    padding: 0 30rpx;
+    padding: 0 0 0 30rpx;
   }
   .grade-name {
     color: #888;
@@ -16,9 +16,8 @@
     border-bottom: 1px solid #e5e5e5;
   }
   .weui-cells_after-title .weui-cell {
-    height: 86rpx;
-    line-height: 86rpx;
-    padding: 0;
+    line-height:48rpx;
+    padding:16rpx 0rpx;
   }
   .workSetion-main {
     border-top: 1px solid #e5e5e5;
@@ -35,6 +34,8 @@
   }
   .weui-cell__ft-plus {
     padding-right: 30px;
+    width:470rpx;
+    margin-right:30rpx;
   }
   .weui-cell__ft_in-access::after {
     right: 13px;
@@ -58,6 +59,7 @@
     width: 54rpx;
     height: 54rpx;
     display: inline-block;
+    margin-right:30rpx;
   }
   .weui-cell-delect {
     width: 100%;

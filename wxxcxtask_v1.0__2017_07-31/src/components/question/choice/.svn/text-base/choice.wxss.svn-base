@@ -9,7 +9,7 @@
 .question .choice .options,
 .question .multi-choice .options,
 .question .alter .options {
-  padding: 0 0 0 60rpx;
+  padding: 0 0 40rpx 90rpx;
 }
 
 .question .choice .options .option .letter,
@@ -22,5 +22,5 @@
 .question .multi-choice .options .option .content,
 .question .alter .options .option .content {
   display: inline-block;
-  width: 576rpx;
+  width: 546rpx;
 }

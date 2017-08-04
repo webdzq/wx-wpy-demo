@@ -7,14 +7,22 @@
     width: 100%;
     .nav {
       background-color: #fff;
-      padding: 0 30rpx;
       border-bottom: 1px solid #e5e5e5;
       height: 95rpx;
       line-height: 95rpx;
-      .prev,
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      .prev {
+        font-size: 28rpx;
+        color: #000;
+        margin-left: 30rpx;
+      }
       .next {
         font-size: 28rpx;
         color: #000;
+        margin-right: 30rpx;
       }
       .progress {
         text-align: center;
@@ -27,37 +35,47 @@
       }
     }
     .display_container {
-      margin-top: 30rpx;
-      margin-bottom: 80rpx;
+      margin-top: 125rpx;
       border-top: 1px solid #e5e5e5;
-      border-bottom: 1px solid #e5e5e5;
       .content_container {
         background-color: #fff;
         border-bottom: 1px solid #e5e5e5;
-        margin-bottom: 30rpx;
         &.answers_container {
           flex-direction: column;
-          .answer_image {
-            display: block;
-            overflow: visible;
-            max-width: 690rpx;
+          .detail_container {
+            display: flex;
+            justify-content: center;
+            .answer_image {
+              display: block;
+              overflow: visible;
+            }
           }
+        }
+        &>.question {
+          width: 100%;
         }
         .container_label {
           font-size: 28rpx;
           color: #888;
           padding: 38rpx 0 22rpx 30rpx;
+          background: #efeff4;
+        }
+        .container_box {
+          border-top: 1px solid #e5e5e5;
+          padding-bottom: 30rpx;
+          background-color: #fff;
         }
         .empty_answer_tip {
           text-align: center;
           font-size: 28rpx;
           border-top: 1px solid #e5e5e5;
           padding: 30rpx;
+          background-color: #fff;
         }
         .detail_container {
           // border-top: 1px solid #e5e5e5;
           padding: 0 30rpx;
-          margin-bottom: 30rpx;
+          margin-top: 30rpx;
         }
       }
     }
@@ -73,10 +91,6 @@
       padding-top: 34rpx;
     }
   }
-}
-
-.wxParse-img {
-  width: 690rpx;
 }
 
 image {
@@ -107,7 +121,9 @@ button[size="mini"] {
 .upload-again {
   height: 70rpx !important;
   line-height: 70rpx !important;
-  margin-top: 8px !important;
+  margin-right: 35rpx;
+  font-size: 24rpx;
+  color: #e64340;
 }
 
 .weui-cell-delect-plus {
@@ -129,8 +145,7 @@ button[size="mini"] {
   height: 32rpx;
   float: left;
   line-height: 70rpx !important;
-  margin-top: 34rpx;
-  margin-right: 20rpx;
+  margin: 27rpx 20rpx 0rpx 20rpx;
   padding: 0px;
 }
 
@@ -139,15 +154,8 @@ button[size="mini"] {
   float: right;
   line-height: 70rpx !important;
   height: 70rpx !important;
-}
-
-.speech_box {
-  border-top: 1px solid #e5e5e5;
-  border-top: 1px solid #e5e5e5;
-}
-
-.voice {
-  margin: 36rpx 0rpx 10rpx 0rpx;
+  margin-left: 10rpx;
+  color: #888888;
 }
 
 .weui-cell-play-plus {
@@ -156,6 +164,22 @@ button[size="mini"] {
 
 .voice-time {
   margin-left: 10rpx;
+}
+
+.voice-fail {
+  text-align: center;
+  border: 1px solid #d6d5d6;
+  border-radius: 10rpx;
+}
+
+.button-hover[type="default"][plain] {
+  width: 300rpx !important;
+}
+
+.weui-flex__item-plus {
+  -webkit-box-flex: 1;
+  -webkit-flex: none;
+  flex: none;
 }
 </style>
 
@@ -170,22 +194,22 @@ button[size="mini"] {
         </view>
         <view class="next" @tap="nextWork">{{nextButtonName}}</view>
       </view>
-      <view bindtouchmove="touchmove" bindtouchstart="touchstart" bindtouchend="touchend" class="display_container">
+      <view class="display_container">
         <view class="weui-flex content_container">
           <template is="question" data="{{question: question.questions, display: 'simple'}}">
           </template>
         </view>
         <view class="flex-wrp content_container answers_container">
           <view class="container_label">作答详情</view>
-          <block wx:if="{{parsedJsonAnswer.length > 0 }}">
+          <view class="container_box" wx:if="{{parsedJsonAnswer.length > 0 }}">
             <block wx:for-items="{{parsedJsonAnswer}}" wx:for-index="aindex" wx:for-item="aitem" wx:key="*this">
               <view class="flex-item flex-item-V detail_container">
                 <navigator url="../canvas/canvas?pad={{pad}}&image={{aitem.imageSrc}}&jsonAnswer={{jsonAnswerStr}}" hover-class="navigator-hover">
-                  <image class="answer_image" data-src="{{aitem.imageSrc}}" src="{{aitem.imageSrc}}" bindload="wxParseAnswerImgLoad" mode="aspectFit" style="width:{{aitem.width}}px;height:{{aitem.height}}px;" />
+                  <image class="answer_image" data-src="{{aitem.imageSrc}}" src="{{aitem.imageSrc}}" bindload="wxParseAnswerImgLoad" mode="aspectFit" style="width:{{aitem.width}}rpx;height:{{aitem.height}}rpx;" />
                 </navigator>
               </view>
             </block>
-          </block>
+          </view>
           <block wx:else>
             <view class="empty_answer_tip">本题未作答</view>
           </block>
@@ -193,32 +217,32 @@ button[size="mini"] {
         <block wx:if="{{jsonAudioComment.length > 0 }}">
           <view class="flex-wrp content_container">
             <view class="container_label container_label_speech">语音批语</view>
-            <view class="speech_box">
+            <view class="container_box">
               <view class="voice">
                 <block wx:for-items="{{jsonAudioComment}}" wx:for-index="index" wx:for-item="item" wx:key="*this">
                   <view class="weui-flex detail_container">
                     <block wx:if="{{!!item.isTmpFile}}">
-                      <view style="text-align:center;">
+                      <view class="voice-fail">
                         <image class="weui-cell-warning" src="/images/warning.png"></image>
-                        <view bindtap="reupAudio" data-index="{{index}}" data-item="{{item}}" class="weui-btn mini-btn upload-again" type="default" size="mini">重新上传</view>
+                        <view bindtap="reupAudio" data-index="{{index}}" data-item="{{item}}" class="weui-btn mini-btn upload-again" type="default" size="mini">语音上传失败，点击重新上传</view>
                       </view>
                     </block>
-                    <view class="weui-flex__item">
+                    <view class="weui-flex__item weui-flex__item-plus" wx:if="{{!item.isTmpFile}}">
                       <view class="placeholder voice-block" style="width:{{100+voiceWidthArr[index]}}rpx">
-                        <view class="weui-cell-play-plus" bindlongtap="delAudio" data-index="{{index}}" data-len="{{item.length}}" data-src="{{item.url}}">
-                          <image bindtap="playVoice" data-index="{{index}}" data-len="{{item.length}}" data-src="{{item.url}}" class="weui-cell-play" src="{{playImageArr[index]}}" style="width:32rpx;height:32rpx;display:inline-block;padding:18rpx 0rpx 18rpx 18rpx;"></image>
+                        <view class="weui-cell-play-plus" bindlongtap="delAudio"  data-index="{{index}}" data-len="{{item.length}}" data-src="{{item.url}}">
+                          <image bindtap="playVoice" data-index="{{index}}" data-len="{{item.length}}" data-src="{{item.url}}" class="weui-cell-play" src="{{playImageArr[index]}}" style="width:32rpx;height:32rpx;display:inline-block;padding:18rpx 0rpx 0rpx 18rpx;"></image>
                         </view>
                       </view>
                     </view>
                     <view>
                       <view class="placeholder voice-time">
                         <!--<view bindtap="delAudio" data-index="{{index}}" data-url="{{item.url}}" class="weui-cell-delect-plus" type="default" size="mini">
-                                                                            <image class="weui-cell-delect" src="/images/del.png" mode="scaleToFill"></image>
-                                                                          </view>-->
+                                                                                                                                              <image class="weui-cell-delect" src="/images/del.png" mode="scaleToFill"></image>
+                                                                                                                                            </view>-->
                         <image class="weui-cell-delect" src="/images/del.png" mode="scaleToFill"></image>
-                      </view>-->
+                      </view>
                       <view>
-                        <text class="weui-cell-play-len" style="">{{item.length}}"</text>
+                        <text class="weui-cell-play-len" style="" wx:if="{{!item.isTmpFile}}">{{item.length}}"</text>
                       </view>
                     </view>
                   </view>
@@ -540,8 +564,10 @@ export default class ReviewWork extends wepy.page {
         const qIndex = this.question.counter
         this.question = this.parsedQuestionList[qIndex - 1]
         const pad = this.getCurrentQuestions().pad
-        this.jsonAnswer = pad.jsonAnswer || []
+        this.parsedJsonAnswer = this.getParsedJsonAnswer(pad.jsonAnswer)
         this.jsonAudioComment = pad.jsonAudioComment || []
+        this.jsonAnswerStr = JSON.stringify(pad.jsonAnswer)
+        this.pad = JSON.stringify(pad)
         this.$apply()
         this.$invoke('marking', 'autoCheckUnfinishQuestion')
         console.log('that.jsonAudioComment=', pad.jsonAudioComment)
@@ -566,9 +592,11 @@ export default class ReviewWork extends wepy.page {
         if (this.nextButtonName === '下一题') {
           const qIndex = this.question.counter
           this.question = this.parsedQuestionList[qIndex + 1]
-          pad = this.getCurrentQuestions().pad
-          this.jsonAnswer = pad.jsonAnswer || []
+          const pad = this.getCurrentQuestions().pad
+          this.parsedJsonAnswer = this.getParsedJsonAnswer(pad.jsonAnswer)
           this.jsonAudioComment = pad.jsonAudioComment || []
+          this.jsonAnswerStr = JSON.stringify(pad.jsonAnswer)
+          this.pad = JSON.stringify(pad)
           this.$apply()
           this.$invoke('marking', 'autoCheckUnfinishQuestion')
           console.log('that.jsonAudioComment=', pad.jsonAudioComment)
@@ -1049,6 +1077,8 @@ export default class ReviewWork extends wepy.page {
           const pad = that.getCurrentQuestions().pad
           that.parsedJsonAnswer = that.getParsedJsonAnswer(pad.jsonAnswer)
           that.jsonAudioComment = pad.jsonAudioComment || []
+          that.jsonAnswerStr = JSON.stringify(pad.jsonAnswer)
+          that.pad = JSON.stringify(pad)
           that.$apply()
           that.$invoke('marking', 'autoCheckUnfinishQuestion')
         }, function (code) {
