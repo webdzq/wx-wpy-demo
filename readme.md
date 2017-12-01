@@ -6,7 +6,7 @@
 2. wxcmpt-wpydemo是小程序组件改造版本，项目组件参考样本。
 
 ## 参考文档
-[wpy开发文档](https://wepyjs.github.io/wepy/)
+[wpy开发文档](https://tencent.github.io/wepy/)
 [小程序开发文档](https://mp.weixin.qq.com/debug/wxadoc/dev/index.html?t=2017327)
 [VUE开发文档](https://cn.vuejs.org/v2/guide/index.html)
 
