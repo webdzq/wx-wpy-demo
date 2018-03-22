@@ -29,6 +29,7 @@
 8. 结构目录主要是`components`，`images`，`mixins`，`pages`。尽量模块化，样式class使用业务模块名起头，`-`分割。
 9. 详细的代码开发技能需要修炼小程序语法，vue语法，wepy开发规范等。
 10. 单元测试：参考test_config.js去配置。使用es6的proxy拦截wx.request实现数据模拟
+* vscode 里面如何去掉 invalid-end-tag 的lint错误，设置中添加`"vetur.validation.template": false`
 ## issues 
 1. <navigator>中url的问题。如果是wepy.component中使用，url路径是父级page页面的相对路径，如worklist中的【批改作业】
 2. wx:for和@tap最好不要同时出现在一个view标签里

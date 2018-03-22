@@ -166,7 +166,7 @@
       let self = this
       wepy.login({
         success(res) {
-          wepy.request({
+          const reqparams = {
             url: API.HOST_URI + API.loginByPassport,
             data: Object.assign({
               code: res.code
@@ -209,7 +209,9 @@
               self.loading = false
               self.$apply()
             }
-          })
+          }
+          // wepy.request()
+          API.testRquestproxy(reqparams)
         }
       })
     }

@@ -1,3 +1,4 @@
+
 var prod = process.env.NODE_ENV === 'production'
 
 module.exports = {
@@ -9,9 +10,6 @@ module.exports = {
     less: {
       compress: true
     },
-    /*sass: {
-      outputStyle: 'compressed'
-    }, */
     babel: {
       sourceMap: false,
       presets: [
