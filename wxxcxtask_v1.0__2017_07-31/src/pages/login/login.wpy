@@ -1,57 +1,54 @@
 <style lang="less">
-.page {
-  .mascot-box {
-    text-align: center;
-    padding: 90rpx 0 100rpx;
-    .mascot {
-      width: 180rpx;
-      height: 258rpx;
+  .page {
+    .mascot-box {
+      text-align: center;
+      padding: 90rpx 0 100rpx;
+      .mascot {
+        width: 180rpx;
+        height: 258rpx;
+      }
+    }
+    .weui-cells {
+      margin-top: 30rpx;
+    }
+    .button {
+      color: #FFFFFF;
+      background-color: #0052CC;
+      margin: 50rpx 30rpx 0;
+      &.button-hover {
+        color: rgba(255, 255, 255, .6);
+        background-color: #0047b3;
+      }
+      &[disabled] {
+        color: rgba(255, 255, 255, .6);
+        background-color: #8fb0e4;
+      }
+    }
+    .account-refer {
+      position: relative;
+      margin-top: 30rpx;
+      height: 50rpx;
+      .reset-password-link {
+        position: absolute;
+        right: 30rpx;
+        top: 0;
+        width: 160rpx;
+        color: rgba(0, 0, 0, .6);
+        font-size: 32rpx;
+      }
     }
   }
-  .weui-cells {
-    margin-top: 30rpx;
+  page {
+    background: #f0eff5;
   }
-  .button {
-    color: #FFFFFF;
-    background-color: #0052CC;
-    margin: 50rpx 30rpx 0;
-    &.button-hover {
-      color: rgba(255, 255, 255, .6);
-      background-color: #0047b3;
-    }
-    &[disabled] {
-      color: rgba(255, 255, 255, .6);
-      background-color: #8fb0e4;
-    }
+  .wetoast__bd {
+    min-width: 0;
+    min-height: 0;
+    padding: 44rpx 48rpx;
   }
-  .account-refer {
-    position: relative;
-    margin-top: 30rpx;
-    height: 50rpx;
-    .reset-password-link {
-      position: absolute;
-      right: 30rpx;
-      top: 0;
-      width: 160rpx;
-      color: rgba(0, 0, 0, .6);
-      font-size: 32rpx;
-    }
+  .wetoast__bd__title {
+    font-size: 26rpx;
   }
-}
-
-page {
-  background: #f0eff5;
-}
-
-.wetoast__bd {
-  min-width: 0;
-  min-height: 0;
-  padding: 44rpx 48rpx;
-}
-
-.wetoast__bd__title {
-  font-size: 26rpx;
-}
 </style>
 
 <template>
@@ -87,167 +84,167 @@ page {
 </template>
 
 <script>
-import wepy from 'wepy'
-import Input from '../../components/input/input'
-import Toast from 'wepy-com-toast'
-import API from '../../util/api.js'
-export default class Login extends wepy.page {
-  config = {
-    navigationBarTitleText: '易学易练老师'
-  }
-  components = {
-    'child-input': Input,
-    toast: Toast
-  }
-  mixins = []
-  data = {
-    hasloginName: false,
-    haspassword: false,
-    loading: false
-  }
-  computed = {
-    disabled() {
-      return !this.hasloginName || !this.haspassword
+  import wepy from 'wepy'
+  import Input from '../../components/input/input'
+  import Toast from 'wepy-com-toast'
+  import API from '../../util/api.js'
+  export default class Login extends wepy.page {
+    config = {
+      navigationBarTitleText: '易学易练老师'
     }
-  }
-  methods = {
-    checkValuesBeforeSubmit(e) {
-      const that = this
-      if (!this.loading) {
-        this.loading = true
-        let trimLoginName = e.detail.value.loginName.trim()
-        let trimPassword = e.detail.value.password.trim()
-        if (!trimLoginName || !trimPassword) {
-          this.$invoke('toast', 'show', {
-            title: '帐号或密码错误'
-          })
-          this.loading = false
-        } else if (trimPassword.length < 6) {
-          this.$invoke('toast', 'show', {
-            title: '请输入正确的密码'
-          })
-          this.loading = false
-        } else {
-          // wx.getNetworkType({
-          //   success: function(res) {
-          //     // 返回网络类型, 有效值：
-          //     // wifi/2g/3g/4g/unknown(Android下不常见的网络类型)/none(无网络)
-          //     let networkType = res.networkType
-          //     if (networkType === 'none') {
-          //       wx.showToast({
-          //         title: '网络未连接，请检查后重试',
-          //         duration: 3000
-          //       })
-          //       that.loading = false
-          //       that.$apply()
-          //     } else {
-          //       that.formSubmit({
-          //         loginName: trimLoginName,
-          //         password: trimPassword
-          //       })
-          //     }
-          //   }
-          // })
-          API.isNetWork(function suc() {
-            that.formSubmit({
-              loginName: trimLoginName,
-              password: trimPassword
+    components = {
+      'child-input': Input,
+      toast: Toast
+    }
+    mixins = []
+    data = {
+      hasloginName: false,
+      haspassword: false,
+      loading: false
+    }
+    computed = {
+      disabled() {
+        return !this.hasloginName || !this.haspassword
+      }
+    }
+    methods = {
+      checkValuesBeforeSubmit(e) {
+        const that = this
+        if (!this.loading) {
+          this.loading = true
+          let trimLoginName = e.detail.value.loginName.trim()
+          let trimPassword = e.detail.value.password.trim()
+          if (!trimLoginName || !trimPassword) {
+            this.$invoke('toast', 'show', {
+              title: '帐号或密码错误'
             })
-          }, function fail() {
-            that.loading = false
-            that.$apply()
+            this.loading = false
+          } else if (trimPassword.length < 6) {
+            this.$invoke('toast', 'show', {
+              title: '请输入正确的密码'
+            })
+            this.loading = false
+          } else {
+            // wx.getNetworkType({
+            //   success: function(res) {
+            //     // 返回网络类型, 有效值：
+            //     // wifi/2g/3g/4g/unknown(Android下不常见的网络类型)/none(无网络)
+            //     let networkType = res.networkType
+            //     if (networkType === 'none') {
+            //       wx.showToast({
+            //         title: '网络未连接，请检查后重试',
+            //         duration: 3000
+            //       })
+            //       that.loading = false
+            //       that.$apply()
+            //     } else {
+            //       that.formSubmit({
+            //         loginName: trimLoginName,
+            //         password: trimPassword
+            //       })
+            //     }
+            //   }
+            // })
+            API.isNetWork(function suc() {
+              that.formSubmit({
+                loginName: trimLoginName,
+                password: trimPassword
+              })
+            }, function fail() {
+              that.loading = false
+              that.$apply()
+            })
+          }
+        }
+      },
+      bindKeyInput(name, e) {
+        this['has' + name] = e.detail.value.trim().length > 0
+        this.$apply()
+      }
+    }
+    formSubmit(params) {
+      let self = this
+      wepy.login({
+        success(res) {
+          wepy.request({
+            url: API.HOST_URI + API.loginByPassport,
+            data: Object.assign({
+              code: res.code
+            }, params),
+            success(_res) {
+              if (_res.data.status.code === 0) {
+                // save `token` & `tid` into storage
+                wepy.setStorage({
+                  key: 'xcx_yixueyilian_privacy',
+                  data: {
+                    token: _res.data.property.token,
+                    tid: _res.data.data[0].tid,
+                    stageId: _res.data.property.favSubject.stageId,
+                    subjectId: _res.data.property.favSubject.subjectId
+                  },
+                  success() {
+                    wepy.switchTab({
+                      url: '../checkWork/checkWork'
+                    })
+                  }
+                })
+              } else {
+                self.$invoke('toast', 'show', {
+                  title: _res.data.status.desc
+                })
+              }
+            },
+            fail(res) {
+              console.log('login..fail', res)
+              const str = res && res.errMsg
+              if (str.indexOf('timeout') !== -1) {
+                wx.showToast({
+                  title: '请求超时',
+                  duration: 3000
+                })
+              }
+            },
+            complete(res) {
+              console.log('login..complete', res)
+              self.loading = false
+              self.$apply()
+            }
           })
         }
-      }
-    },
-    bindKeyInput(name, e) {
-      this['has' + name] = e.detail.value.trim().length > 0
-      this.$apply()
+      })
+    }
+    onLoad() {
+      wx.getSetting({
+        success(res) {
+          if (!res['scope.userInfo']) {
+            wx.authorize({
+              scope: 'scope.userInfo',
+              success() {},
+              fail() {
+                // wx.showToast({
+                //   title: '您拒绝了授权,将无法登录',
+                //   icon: 'fail',
+                //   duration: 3000
+                // })
+                wx.openSetting({
+                  success(res) {
+                    res.authSetting = {
+                      'scope.userInfo': true
+                    }
+                  },
+                  fail() {
+                    // wx.showToast({
+                    //   title: '您拒绝了授权',
+                    //   icon: 'fail',
+                    //   duration: 3000
+                    // })
+                  }
+                })
+              }
+            })
+          }
+        }
+      })
     }
   }
-  formSubmit(params) {
-    let self = this
-    wepy.login({
-      success(res) {
-        wepy.request({
-          url: API.HOST_URI + API.loginByPassport,
-          data: Object.assign({
-            code: res.code
-          }, params),
-          success(_res) {
-            if (_res.data.status.code === 0) {
-              // save `token` & `tid` into storage
-              wepy.setStorage({
-                key: 'xcx_yixueyilian_privacy',
-                data: {
-                  token: _res.data.property.token,
-                  tid: _res.data.data[0].tid,
-                  stageId: _res.data.property.favSubject.stageId,
-                  subjectId: _res.data.property.favSubject.subjectId
-                },
-                success() {
-                  wepy.switchTab({
-                    url: '../checkWork/checkWork'
-                  })
-                }
-              })
-            } else {
-              self.$invoke('toast', 'show', {
-                title: _res.data.status.desc
-              })
-            }
-          },
-          fail(res) {
-            console.log('login..fail', res)
-            const str = res && res.errMsg
-            if (str.indexOf('timeout') !== -1) {
-              wx.showToast({
-                title: '请求超时',
-                duration: 3000
-              })
-            }
-          },
-          complete(res) {
-            console.log('login..complete', res)
-            self.loading = false
-            self.$apply()
-          }
-        })
-      }
-    })
-  }
-  onLoad() {
-    wx.getSetting({
-      success(res) {
-        if (!res['scope.userInfo']) {
-          wx.authorize({
-            scope: 'scope.userInfo',
-            success() { },
-            fail() {
-              // wx.showToast({
-              //   title: '您拒绝了授权,将无法登录',
-              //   icon: 'fail',
-              //   duration: 3000
-              // })
-              wx.openSetting({
-                success(res) {
-                  res.authSetting = {
-                    'scope.userInfo': true
-                  }
-                },
-                fail() {
-                  // wx.showToast({
-                  //   title: '您拒绝了授权',
-                  //   icon: 'fail',
-                  //   duration: 3000
-                  // })
-                }
-              })
-            }
-          })
-        }
-      }
-    })
-  }
-}
 </script>
